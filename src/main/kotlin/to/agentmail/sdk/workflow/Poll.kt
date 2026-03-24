@@ -14,6 +14,6 @@ fun AgentMail.poll(
 ): Job {
     return monitor(inboxId, scope) {
         pollInterval = interval
-        onMessage(handler)
+        onMessage(handler = handler)
     }
 }
