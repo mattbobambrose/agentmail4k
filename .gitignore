@@ -8,6 +8,8 @@ build/
 .claude/*.lock
 .jbeval
 secrets
+logback.xml
+Main.kt
 
 ### IntelliJ IDEA ###
 .idea/
@@ -45,3 +47,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### MkDocs ###
+website/site/
