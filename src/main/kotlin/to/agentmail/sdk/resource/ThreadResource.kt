@@ -3,6 +3,7 @@ package to.agentmail.sdk.resource
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.encodeURLPathPart
 import to.agentmail.sdk.builder.DeleteThreadBuilder
 import to.agentmail.sdk.builder.ListThreadsBuilder
 import to.agentmail.sdk.model.AttachmentData
@@ -21,18 +22,18 @@ class ThreadResource internal constructor(
     }
 
     suspend fun get(threadId: String): Thread {
-        return client.get("$basePath/$threadId").body()
+        return client.get("$basePath/${threadId.encodeURLPathPart()}").body()
     }
 
     suspend fun delete(threadId: String, block: DeleteThreadBuilder.() -> Unit = {}) {
         val params = DeleteThreadBuilder().apply(block).toQueryParams()
-        client.delete("$basePath/$threadId") {
+        client.delete("$basePath/${threadId.encodeURLPathPart()}") {
             params.forEach { (k, v) -> parameter(k, v) }
         }
     }
 
     suspend fun getAttachment(threadId: String, attachmentId: String): AttachmentData {
-        val response = client.get("$basePath/$threadId/attachments/$attachmentId")
+        val response = client.get("$basePath/${threadId.encodeURLPathPart()}/attachments/${attachmentId.encodeURLPathPart()}")
         return AttachmentData(
             data = response.body<ByteArray>(),
             contentType = response.headers["Content-Type"] ?: "application/octet-stream",

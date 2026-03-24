@@ -1,37 +1,40 @@
 package to.agentmail.sdk.resource
 
 import io.ktor.client.*
+import to.agentmail.sdk.internal.ApiPaths
 
 class PodScope internal constructor(
     private val client: HttpClient,
     private val podId: String,
 ) {
+    private val podPath = ApiPaths.pod(podId)
+
     val inboxes: InboxResource by lazy {
-        InboxResource(client, "v0/pods/$podId/inboxes")
+        InboxResource(client, "$podPath/inboxes")
     }
 
     val threads: ThreadResource by lazy {
-        ThreadResource(client, "v0/pods/$podId/threads")
+        ThreadResource(client, "$podPath/threads")
     }
 
     val drafts: DraftResource by lazy {
-        DraftResource(client, "v0/pods/$podId/drafts")
+        DraftResource(client, "$podPath/drafts")
     }
 
     val domains: DomainResource by lazy {
-        DomainResource(client, "v0/pods/$podId/domains")
+        DomainResource(client, "$podPath/domains")
     }
 
     val lists: ListResource by lazy {
-        ListResource(client, "v0/pods/$podId/lists")
+        ListResource(client, "$podPath/lists")
     }
 
     val metrics: MetricsResource by lazy {
-        MetricsResource(client, "v0/pods/$podId/metrics")
+        MetricsResource(client, "$podPath/metrics")
     }
 
     val apiKeys: ApiKeyResource by lazy {
-        ApiKeyResource(client, "v0/pods/$podId/api-keys")
+        ApiKeyResource(client, "$podPath/api-keys")
     }
 
     fun inboxes(inboxId: String): InboxScope = InboxScope(client, inboxId)

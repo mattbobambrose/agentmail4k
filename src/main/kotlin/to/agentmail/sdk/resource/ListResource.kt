@@ -3,6 +3,7 @@ package to.agentmail.sdk.resource
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.encodeURLPathPart
 import to.agentmail.sdk.builder.CreateListEntryBuilder
 import to.agentmail.sdk.builder.ListEntriesBuilder
 import to.agentmail.sdk.model.*
@@ -34,10 +35,10 @@ class ListResource internal constructor(
     }
 
     suspend fun get(direction: ListDirection, type: ListType, entry: String): ListEntry {
-        return client.get("$basePath/${direction.value}/${type.value}/$entry").body()
+        return client.get("$basePath/${direction.value}/${type.value}/${entry.encodeURLPathPart()}").body()
     }
 
     suspend fun delete(direction: ListDirection, type: ListType, entry: String) {
-        client.delete("$basePath/${direction.value}/${type.value}/$entry")
+        client.delete("$basePath/${direction.value}/${type.value}/${entry.encodeURLPathPart()}")
     }
 }

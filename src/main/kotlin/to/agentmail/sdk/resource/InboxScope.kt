@@ -1,32 +1,35 @@
 package to.agentmail.sdk.resource
 
 import io.ktor.client.*
+import to.agentmail.sdk.internal.ApiPaths
 
 class InboxScope internal constructor(
     private val client: HttpClient,
     private val inboxId: String,
 ) {
+    private val inboxPath = ApiPaths.inbox(inboxId)
+
     val messages: MessageResource by lazy {
-        MessageResource(client, "v0/inboxes/$inboxId/messages")
+        MessageResource(client, "$inboxPath/messages")
     }
 
     val threads: ThreadResource by lazy {
-        ThreadResource(client, "v0/inboxes/$inboxId/threads")
+        ThreadResource(client, "$inboxPath/threads")
     }
 
     val drafts: DraftResource by lazy {
-        DraftResource(client, "v0/inboxes/$inboxId/drafts")
+        DraftResource(client, "$inboxPath/drafts")
     }
 
     val lists: ListResource by lazy {
-        ListResource(client, "v0/inboxes/$inboxId/lists")
+        ListResource(client, "$inboxPath/lists")
     }
 
     val metrics: MetricsResource by lazy {
-        MetricsResource(client, "v0/inboxes/$inboxId/metrics")
+        MetricsResource(client, "$inboxPath/metrics")
     }
 
     val apiKeys: ApiKeyResource by lazy {
-        ApiKeyResource(client, "v0/inboxes/$inboxId/api-keys")
+        ApiKeyResource(client, "$inboxPath/api-keys")
     }
 }

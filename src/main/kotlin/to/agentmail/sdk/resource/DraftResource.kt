@@ -3,6 +3,7 @@ package to.agentmail.sdk.resource
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.encodeURLPathPart
 import to.agentmail.sdk.builder.*
 import to.agentmail.sdk.model.*
 
@@ -25,29 +26,29 @@ class DraftResource internal constructor(
     }
 
     suspend fun get(draftId: String): Draft {
-        return client.get("$basePath/$draftId").body()
+        return client.get("$basePath/${draftId.encodeURLPathPart()}").body()
     }
 
     suspend fun update(draftId: String, block: UpdateDraftBuilder.() -> Unit): Draft {
         val body = UpdateDraftBuilder().apply(block).build()
-        return client.patch("$basePath/$draftId") {
+        return client.patch("$basePath/${draftId.encodeURLPathPart()}") {
             setBody(body)
         }.body()
     }
 
     suspend fun delete(draftId: String) {
-        client.delete("$basePath/$draftId")
+        client.delete("$basePath/${draftId.encodeURLPathPart()}")
     }
 
     suspend fun send(draftId: String, block: SendDraftBuilder.() -> Unit = {}): SendMessageResponse {
         val body = SendDraftBuilder().apply(block).build()
-        return client.post("$basePath/$draftId/send") {
+        return client.post("$basePath/${draftId.encodeURLPathPart()}/send") {
             setBody(body)
         }.body()
     }
 
     suspend fun getAttachment(draftId: String, attachmentId: String): AttachmentData {
-        val response = client.get("$basePath/$draftId/attachments/$attachmentId")
+        val response = client.get("$basePath/${draftId.encodeURLPathPart()}/attachments/${attachmentId.encodeURLPathPart()}")
         return AttachmentData(
             data = response.body<ByteArray>(),
             contentType = response.headers["Content-Type"] ?: "application/octet-stream",
