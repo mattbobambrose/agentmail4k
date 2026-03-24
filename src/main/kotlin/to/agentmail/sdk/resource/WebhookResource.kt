@@ -3,6 +3,7 @@ package to.agentmail.sdk.resource
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.encodeURLPathPart
 import to.agentmail.sdk.builder.CreateWebhookBuilder
 import to.agentmail.sdk.builder.ListWebhooksBuilder
 import to.agentmail.sdk.builder.UpdateWebhookBuilder
@@ -11,8 +12,8 @@ import to.agentmail.sdk.model.WebhookList
 
 class WebhookResource internal constructor(
     private val client: HttpClient,
+    private val basePath:String,
 ) {
-    private val basePath = "v0/webhooks"
 
     suspend fun list(block: ListWebhooksBuilder.() -> Unit = {}): WebhookList {
         val params = ListWebhooksBuilder().apply(block).toQueryParams()
@@ -29,17 +30,17 @@ class WebhookResource internal constructor(
     }
 
     suspend fun get(webhookId: String): Webhook {
-        return client.get("$basePath/$webhookId").body()
+        return client.get("$basePath/${webhookId.encodeURLPathPart()}").body()
     }
 
     suspend fun update(webhookId: String, block: UpdateWebhookBuilder.() -> Unit): Webhook {
         val body = UpdateWebhookBuilder().apply(block).build()
-        return client.patch("$basePath/$webhookId") {
+        return client.patch("$basePath/${webhookId.encodeURLPathPart()}") {
             setBody(body)
         }.body()
     }
 
     suspend fun delete(webhookId: String) {
-        client.delete("$basePath/$webhookId")
+        client.delete("$basePath/${webhookId.encodeURLPathPart()}")
     }
 }

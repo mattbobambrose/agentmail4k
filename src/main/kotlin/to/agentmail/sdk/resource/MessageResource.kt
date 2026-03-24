@@ -1,10 +1,24 @@
 package to.agentmail.sdk.resource
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import to.agentmail.sdk.builder.*
-import to.agentmail.sdk.model.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.request.patch
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.encodeURLPathPart
+import to.agentmail.sdk.builder.ForwardMessageBuilder
+import to.agentmail.sdk.builder.ListMessagesBuilder
+import to.agentmail.sdk.builder.ReplyAllBuilder
+import to.agentmail.sdk.builder.ReplyBuilder
+import to.agentmail.sdk.builder.SendMessageBuilder
+import to.agentmail.sdk.builder.UpdateMessageBuilder
+import to.agentmail.sdk.model.AttachmentData
+import to.agentmail.sdk.model.Message
+import to.agentmail.sdk.model.MessageList
+import to.agentmail.sdk.model.RawMessageResponse
+import to.agentmail.sdk.model.SendMessageResponse
 
 class MessageResource internal constructor(
     private val client: HttpClient,
@@ -18,12 +32,12 @@ class MessageResource internal constructor(
     }
 
     suspend fun get(messageId: String): Message {
-        return client.get("$basePath/$messageId").body()
+        return client.get("$basePath/${messageId.encodeURLPathPart()}").body()
     }
 
     suspend fun update(messageId: String, block: UpdateMessageBuilder.() -> Unit): Message {
         val body = UpdateMessageBuilder().apply(block).build()
-        return client.patch("$basePath/$messageId") {
+        return client.patch("$basePath/${messageId.encodeURLPathPart()}") {
             setBody(body)
         }.body()
     }
@@ -37,27 +51,27 @@ class MessageResource internal constructor(
 
     suspend fun reply(messageId: String, block: ReplyBuilder.() -> Unit): SendMessageResponse {
         val body = ReplyBuilder().apply(block).build()
-        return client.post("$basePath/$messageId/reply") {
+        return client.post("$basePath/${messageId.encodeURLPathPart()}/reply") {
             setBody(body)
         }.body()
     }
 
     suspend fun replyAll(messageId: String, block: ReplyAllBuilder.() -> Unit): SendMessageResponse {
         val body = ReplyAllBuilder().apply(block).build()
-        return client.post("$basePath/$messageId/reply-all") {
+        return client.post("$basePath/${messageId.encodeURLPathPart()}/reply-all") {
             setBody(body)
         }.body()
     }
 
     suspend fun forward(messageId: String, block: ForwardMessageBuilder.() -> Unit): SendMessageResponse {
         val body = ForwardMessageBuilder().apply(block).build()
-        return client.post("$basePath/$messageId/forward") {
+        return client.post("$basePath/${messageId.encodeURLPathPart()}/forward") {
             setBody(body)
         }.body()
     }
 
     suspend fun getAttachment(messageId: String, attachmentId: String): AttachmentData {
-        val response = client.get("$basePath/$messageId/attachments/$attachmentId")
+        val response = client.get("$basePath/${messageId.encodeURLPathPart()}/attachments/${attachmentId.encodeURLPathPart()}")
         return AttachmentData(
             data = response.body<ByteArray>(),
             contentType = response.headers["Content-Type"] ?: "application/octet-stream",
@@ -65,6 +79,6 @@ class MessageResource internal constructor(
     }
 
     suspend fun getRaw(messageId: String): RawMessageResponse {
-        return client.get("$basePath/$messageId/raw").body()
+        return client.get("$basePath/${messageId.encodeURLPathPart()}/raw").body()
     }
 }

@@ -7,8 +7,9 @@ import to.agentmail.sdk.model.Organization
 
 class OrganizationResource internal constructor(
     private val client: HttpClient,
+    private val basePath: String,
 ) {
     suspend fun get(): Organization {
-        return client.get("v0/organizations").body()
+        return client.get(basePath).body()
     }
 }

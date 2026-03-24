@@ -3,6 +3,7 @@ package to.agentmail.sdk.resource
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.encodeURLPathPart
 import to.agentmail.sdk.builder.CreateApiKeyBuilder
 import to.agentmail.sdk.builder.ListApiKeysBuilder
 import to.agentmail.sdk.model.ApiKeyList
@@ -27,6 +28,6 @@ class ApiKeyResource internal constructor(
     }
 
     suspend fun delete(apiKeyId: String) {
-        client.delete("$basePath/$apiKeyId")
+        client.delete("$basePath/${apiKeyId.encodeURLPathPart()}")
     }
 }

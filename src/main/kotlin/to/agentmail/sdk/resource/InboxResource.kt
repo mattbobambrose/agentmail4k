@@ -3,6 +3,7 @@ package to.agentmail.sdk.resource
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.encodeURLPathPart
 import to.agentmail.sdk.builder.CreateInboxBuilder
 import to.agentmail.sdk.builder.ListInboxesBuilder
 import to.agentmail.sdk.builder.UpdateInboxBuilder
@@ -11,7 +12,7 @@ import to.agentmail.sdk.model.InboxList
 
 class InboxResource internal constructor(
     private val client: HttpClient,
-    private val basePath: String = "v0/inboxes",
+    private val basePath: String,
 ) {
     suspend fun list(block: ListInboxesBuilder.() -> Unit = {}): InboxList {
         val params = ListInboxesBuilder().apply(block).toQueryParams()
@@ -28,17 +29,17 @@ class InboxResource internal constructor(
     }
 
     suspend fun get(inboxId: String): Inbox {
-        return client.get("$basePath/$inboxId").body()
+        return client.get("$basePath/${inboxId.encodeURLPathPart()}").body()
     }
 
     suspend fun update(inboxId: String, block: UpdateInboxBuilder.() -> Unit): Inbox {
         val body = UpdateInboxBuilder().apply(block).build()
-        return client.patch("$basePath/$inboxId") {
+        return client.patch("$basePath/${inboxId.encodeURLPathPart()}") {
             setBody(body)
         }.body()
     }
 
     suspend fun delete(inboxId: String) {
-        client.delete("$basePath/$inboxId")
+        client.delete("$basePath/${inboxId.encodeURLPathPart()}")
     }
 }
