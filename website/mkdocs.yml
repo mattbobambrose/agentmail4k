@@ -1,0 +1,43 @@
+site_name: AgentMail Kotlin SDK
+site_description: Kotlin SDK for the AgentMail API — idiomatic DSL-based client for email automation
+site_url: https://agentmail-to.github.io/agentmail-kotlin
+repo_url: https://github.com/agentmail-to/agentmail-kotlin
+repo_name: agentmail-to/agentmail-kotlin
+
+theme:
+  name: readthedocs
+  highlightjs: true
+  hljs_languages:
+    - kotlin
+    - yaml
+    - bash
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Configuration: configuration.md
+  - Resources:
+    - Inboxes: resources/inboxes.md
+    - Messages: resources/messages.md
+    - Threads: resources/threads.md
+    - Drafts: resources/drafts.md
+    - Domains: resources/domains.md
+    - Pods: resources/pods.md
+    - Webhooks: resources/webhooks.md
+    - Lists: resources/lists.md
+    - Metrics: resources/metrics.md
+    - API Keys: resources/api-keys.md
+    - Organization: resources/organization.md
+  - Scoped Access: scoped-access.md
+  - Workflows:
+    - Monitor: workflows/monitor.md
+    - Auto-Reply: workflows/auto-reply.md
+    - Bulk Operations: workflows/bulk.md
+    - Polling: workflows/poll.md
+    - Webhook Handler: workflows/webhook-handler.md
+  - Models: models.md
