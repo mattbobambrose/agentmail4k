@@ -11,6 +11,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import to.agentmail.sdk.internal.ApiPaths
 import to.agentmail.sdk.resource.*
 
 class ResourceTest : StringSpec({
@@ -33,7 +34,7 @@ class ResourceTest : StringSpec({
                 }
             """)
         }
-        val resource = InboxResource(client, "v0/inboxes")
+        val resource = InboxResource(client, ApiPaths.INBOXES)
         val result = resource.list()
         result.count shouldBe 1
         result.inboxes[0].inboxId shouldBe "inbox_1"
@@ -56,7 +57,7 @@ class ResourceTest : StringSpec({
                 }
             """)
         }
-        val resource = InboxResource(client, "v0/inboxes")
+        val resource = InboxResource(client, ApiPaths.INBOXES)
         val result = resource.create {
             username = "testuser"
         }
@@ -77,7 +78,7 @@ class ResourceTest : StringSpec({
                 }
             """)
         }
-        val resource = InboxResource(client, "v0/inboxes")
+        val resource = InboxResource(client, ApiPaths.INBOXES)
         val result = resource.get("inbox_123")
         result.inboxId shouldBe "inbox_123"
     }
@@ -88,7 +89,7 @@ class ResourceTest : StringSpec({
             request.url.encodedPath shouldBe "/v0/inboxes/inbox_456"
             respondJson("{}")
         }
-        val resource = InboxResource(client, "v0/inboxes")
+        val resource = InboxResource(client, ApiPaths.INBOXES)
         resource.delete("inbox_456")
     }
 
@@ -110,7 +111,7 @@ class ResourceTest : StringSpec({
                 }
             """)
         }
-        val resource = MessageResource(client, "v0/inboxes/inbox_1/messages")
+        val resource = MessageResource(client, "${ApiPaths.INBOXES}/inbox_1/messages")
         val result = resource.send {
             to = listOf("recipient@example.com")
             subject = "Hello"
@@ -134,7 +135,7 @@ class ResourceTest : StringSpec({
                 }
             """)
         }
-        val resource = MessageResource(client, "v0/inboxes/inbox_1/messages")
+        val resource = MessageResource(client, "${ApiPaths.INBOXES}/inbox_1/messages")
         val result = resource.reply("msg_1") {
             text = "Reply text"
         }
@@ -158,7 +159,7 @@ class ResourceTest : StringSpec({
                 }
             """)
         }
-        val resource = ThreadResource(client, "v0/threads")
+        val resource = ThreadResource(client, ApiPaths.THREADS)
         val result = resource.list {
             limit = 10
             labels = listOf("inbox", "important")
@@ -176,7 +177,7 @@ class ResourceTest : StringSpec({
             request.url.encodedPath shouldBe "/v0/domains/domain_1/verify"
             respondJson("{}")
         }
-        val resource = DomainResource(client, "v0/domains")
+        val resource = DomainResource(client, ApiPaths.DOMAINS)
         resource.verify("domain_1")
     }
 
@@ -194,7 +195,7 @@ class ResourceTest : StringSpec({
                 }
             """)
         }
-        val resource = PodResource(client, "v0/pods")
+        val resource = PodResource(client, ApiPaths.PODS)
         val result = resource.create()
         result.podId shouldBe "pod_1"
     }
@@ -219,7 +220,7 @@ class ResourceTest : StringSpec({
                 }
             """)
         }
-        val resource = WebhookResource(client, "v0/webhooks")
+        val resource = WebhookResource(client, ApiPaths.WEBHOOKS)
         val result = resource.create {
             url = "https://example.com/hook"
             events = listOf("message.received")
@@ -242,7 +243,7 @@ class ResourceTest : StringSpec({
                 }
             """)
         }
-        val resource = OrganizationResource(client, "v0/organizations")
+        val resource = OrganizationResource(client, ApiPaths.ORGANIZATIONS)
         val result = resource.get()
         result.updatedAt.toString() shouldBe "2026-01-01T00:00:00Z"
     }
@@ -263,7 +264,7 @@ class ResourceTest : StringSpec({
                 }
             """)
         }
-        val resource = ApiKeyResource(client, "v0/api-keys")
+        val resource = ApiKeyResource(client, ApiPaths.API_KEYS)
         val result = resource.create {
             name = "my-key"
         }

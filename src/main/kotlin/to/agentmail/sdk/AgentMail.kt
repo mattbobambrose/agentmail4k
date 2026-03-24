@@ -1,6 +1,7 @@
 package to.agentmail.sdk
 
 import io.ktor.client.HttpClient
+import to.agentmail.sdk.internal.ApiPaths
 import to.agentmail.sdk.internal.HttpClientFactory
 import to.agentmail.sdk.resource.ApiKeyResource
 import to.agentmail.sdk.resource.DomainResource
@@ -20,16 +21,16 @@ class AgentMail private constructor(
   private val httpClient: HttpClient,
 ) : Closeable {
 
-  val inboxes: InboxResource = InboxResource(httpClient, "v0/inboxes")
-  val threads: ThreadResource = ThreadResource(httpClient, "v0/threads")
-  val drafts: DraftResource = DraftResource(httpClient, "v0/drafts")
-  val domains: DomainResource = DomainResource(httpClient, "v0/domains")
-  val pods: PodResource = PodResource(httpClient, "v0/pods")
-  val webhooks: WebhookResource = WebhookResource(httpClient, "v0/webhooks")
-  val lists: ListResource = ListResource(httpClient, "v0/lists")
-  val metrics: MetricsResource = MetricsResource(httpClient, "v0/metrics")
-  val apiKeys: ApiKeyResource = ApiKeyResource(httpClient, "v0/api-keys")
-  val organization: OrganizationResource = OrganizationResource(httpClient, "v0/organizations")
+  val inboxes: InboxResource = InboxResource(httpClient, ApiPaths.INBOXES)
+  val threads: ThreadResource = ThreadResource(httpClient, ApiPaths.THREADS)
+  val drafts: DraftResource = DraftResource(httpClient, ApiPaths.DRAFTS)
+  val domains: DomainResource = DomainResource(httpClient, ApiPaths.DOMAINS)
+  val pods: PodResource = PodResource(httpClient, ApiPaths.PODS)
+  val webhooks: WebhookResource = WebhookResource(httpClient, ApiPaths.WEBHOOKS)
+  val lists: ListResource = ListResource(httpClient, ApiPaths.LISTS)
+  val metrics: MetricsResource = MetricsResource(httpClient, ApiPaths.METRICS)
+  val apiKeys: ApiKeyResource = ApiKeyResource(httpClient, ApiPaths.API_KEYS)
+  val organization: OrganizationResource = OrganizationResource(httpClient, ApiPaths.ORGANIZATIONS)
 
   fun inboxes(inboxId: String): InboxScope = InboxScope(httpClient, inboxId)
   fun pods(podId: String): PodScope = PodScope(httpClient, podId)
