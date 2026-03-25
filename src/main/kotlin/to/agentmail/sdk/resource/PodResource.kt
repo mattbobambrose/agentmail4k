@@ -28,10 +28,12 @@ class PodResource internal constructor(
   }
 
   suspend fun get(podId: String): Pod {
+    require(podId.isNotEmpty()) { "Pod ID must not be empty." }
     return client.get("$basePath/${podId.encodeURLPathPart()}").body()
   }
 
   suspend fun delete(podId: String) {
+    require(podId.isNotEmpty()) { "Pod ID must not be empty." }
     client.delete("$basePath/${podId.encodeURLPathPart()}")
   }
 }

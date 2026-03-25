@@ -17,7 +17,7 @@ import to.agentmail.sdk.resource.ThreadResource
 import to.agentmail.sdk.resource.WebhookResource
 import java.io.Closeable
 
-class AgentMail private constructor(
+class AgentMailClient private constructor(
   private val httpClient: HttpClient,
 ) : Closeable {
 
@@ -40,10 +40,10 @@ class AgentMail private constructor(
   }
 
   companion object {
-    operator fun invoke(block: AgentMailConfigBuilder.() -> Unit = {}): AgentMail {
+    operator fun invoke(block: AgentMailConfigBuilder.() -> Unit = {}): AgentMailClient {
       val config = AgentMailConfigBuilder().apply(block).build()
       val httpClient = HttpClientFactory.create(config)
-      return AgentMail(httpClient)
+      return AgentMailClient(httpClient)
     }
   }
 }
