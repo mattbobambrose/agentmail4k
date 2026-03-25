@@ -8,7 +8,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import to.agentmail.sdk.AgentMail
+import to.agentmail.dsl.fullMessage
+import to.agentmail.sdk.AgentMailClient
 import to.agentmail.sdk.AgentMailDsl
 import to.agentmail.sdk.model.Message
 import kotlin.time.Duration
@@ -23,8 +24,13 @@ class MonitorBuilder {
   var includeSpam: Boolean = false
   var includeBlocked: Boolean = false
 
-  fun onMessage(fullMessage: Boolean = false, handler: suspend (Message) -> Unit) {
-    this.fullMessage = fullMessage
+  fun onMessage(handler: suspend (Message) -> Unit) {
+    fullMessage = false
+    onMessage = handler
+  }
+
+  fun onFullMessage(handler: suspend (Message) -> Unit) {
+    fullMessage = true
     onMessage = handler
   }
 
@@ -51,7 +57,7 @@ internal data class MonitorConfig(
   val includeBlocked: Boolean,
 )
 
-fun AgentMail.monitor(
+fun AgentMailClient.monitor(
   inboxId: String,
   scope: CoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
   block: MonitorBuilder.() -> Unit,
@@ -60,11 +66,12 @@ fun AgentMail.monitor(
   val client = this
 
   return scope.launch {
+    val inboxScope = client.inboxes(inboxId)
     var lastTimestamp: String? = null
 
     while (isActive) {
       try {
-        val messages = client.inboxes(inboxId).messages.list {
+        val messages = inboxScope.messages.list {
           ascending = false
           limit = 50
           includeSpam = config.includeSpam
@@ -74,8 +81,8 @@ fun AgentMail.monitor(
 
         if (messages.messages.isNotEmpty()) {
           lastTimestamp = messages.messages.first().timestamp.toString()
-          for (message in messages.messages.reversed()) {
-            val msg = if (config.fullMessage) message.fullMessage(client) else message
+          for (message in messages.messages.asReversed()) {
+            val msg = if (config.fullMessage) client.fullMessage(message) else message
             config.onMessage?.invoke(msg)
           }
         }
