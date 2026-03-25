@@ -4,23 +4,35 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.shouldBe
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import kotlinx.datetime.Instant
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import to.agentmail.sdk.model.*
+import to.agentmail.sdk.model.ApiKey
+import to.agentmail.sdk.model.Attachment
+import to.agentmail.sdk.model.ContentDisposition
+import to.agentmail.sdk.model.CreateApiKeyResponse
+import to.agentmail.sdk.model.Domain
+import to.agentmail.sdk.model.Draft
+import to.agentmail.sdk.model.Inbox
+import to.agentmail.sdk.model.InboxList
+import to.agentmail.sdk.model.ListEntry
+import to.agentmail.sdk.model.Message
+import to.agentmail.sdk.model.Metric
+import to.agentmail.sdk.model.Pod
+import to.agentmail.sdk.model.Thread
+import to.agentmail.sdk.model.Webhook
 
 class ModelTest : StringSpec({
 
-    val json = Json {
-        ignoreUnknownKeys = true
-        encodeDefaults = false
-        explicitNulls = false
-    }
+  val json = Json {
+    ignoreUnknownKeys = true
+    encodeDefaults = false
+    explicitNulls = false
+  }
 
-    "Inbox deserialization maps snake_case fields to camelCase properties" {
-        val raw = """
+  "Inbox deserialization maps snake_case fields to camelCase properties" {
+    val raw = """
         {
             "inbox_id": "inbox-1",
             "pod_id": "pod-1",
@@ -32,19 +44,19 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val inbox = json.decodeFromString<Inbox>(raw)
+    val inbox = json.decodeFromString<Inbox>(raw)
 
-        inbox.inboxId shouldBe "inbox-1"
-        inbox.podId shouldBe "pod-1"
-        inbox.email shouldBe "test@example.com"
-        inbox.displayName shouldBe "Test Inbox"
-        inbox.clientId shouldBe "client-1"
-        inbox.createdAt shouldBe Instant.parse("2024-01-01T00:00:00Z")
-        inbox.updatedAt shouldBe Instant.parse("2024-06-15T12:30:00Z")
-    }
+    inbox.inboxId shouldBe "inbox-1"
+    inbox.podId shouldBe "pod-1"
+    inbox.email shouldBe "test@example.com"
+    inbox.displayName shouldBe "Test Inbox"
+    inbox.clientId shouldBe "client-1"
+    inbox.createdAt shouldBe Instant.parse("2024-01-01T00:00:00Z")
+    inbox.updatedAt shouldBe Instant.parse("2024-06-15T12:30:00Z")
+  }
 
-    "InboxList deserialization parses next_page_token and inbox array" {
-        val raw = """
+  "InboxList deserialization parses next_page_token and inbox array" {
+    val raw = """
         {
             "count": 2,
             "limit": 10,
@@ -66,18 +78,18 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val inboxList = json.decodeFromString<InboxList>(raw)
+    val inboxList = json.decodeFromString<InboxList>(raw)
 
-        inboxList.count shouldBe 2
-        inboxList.limit shouldBe 10
-        inboxList.nextPageToken shouldBe "token-abc"
-        inboxList.inboxes shouldHaveSize 2
-        inboxList.inboxes[0].inboxId shouldBe "inbox-1"
-        inboxList.inboxes[1].inboxId shouldBe "inbox-2"
-    }
+    inboxList.count shouldBe 2
+    inboxList.limit shouldBe 10
+    inboxList.nextPageToken shouldBe "token-abc"
+    inboxList.inboxes shouldHaveSize 2
+    inboxList.inboxes[0].inboxId shouldBe "inbox-1"
+    inboxList.inboxes[1].inboxId shouldBe "inbox-2"
+  }
 
-    "Message deserialization with all fields including in_reply_to, attachments, and headers" {
-        val raw = """
+  "Message deserialization with all fields including in_reply_to, attachments, and headers" {
+    val raw = """
         {
             "inbox_id": "inbox-1",
             "thread_id": "thread-1",
@@ -110,31 +122,31 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val message = json.decodeFromString<Message>(raw)
+    val message = json.decodeFromString<Message>(raw)
 
-        message.inboxId shouldBe "inbox-1"
-        message.threadId shouldBe "thread-1"
-        message.messageId shouldBe "msg-1"
-        message.labels shouldContainExactly listOf("inbox", "unread")
-        message.from shouldBe "sender@example.com"
-        message.to shouldContainExactly listOf("recipient@example.com")
-        message.cc shouldContainExactly listOf("cc@example.com")
-        message.bcc shouldContainExactly listOf("bcc@example.com")
-        message.subject shouldBe "Hello"
-        message.preview shouldBe "Hello world..."
-        message.text shouldBe "Hello world"
-        message.html shouldBe "<p>Hello world</p>"
-        message.attachments shouldHaveSize 1
-        message.attachments[0].attachmentId shouldBe "att-1"
-        message.attachments[0].contentDisposition shouldBe ContentDisposition.ATTACHMENT
-        message.inReplyTo shouldBe "msg-0"
-        message.references shouldContainExactly listOf("msg-0")
-        message.headers shouldBe mapOf("X-Custom" to "value")
-        message.size shouldBe 2048
-    }
+    message.inboxId shouldBe "inbox-1"
+    message.threadId shouldBe "thread-1"
+    message.messageId shouldBe "msg-1"
+    message.labels shouldContainExactly listOf("inbox", "unread")
+    message.from shouldBe "sender@example.com"
+    message.to shouldContainExactly listOf("recipient@example.com")
+    message.cc shouldContainExactly listOf("cc@example.com")
+    message.bcc shouldContainExactly listOf("bcc@example.com")
+    message.subject shouldBe "Hello"
+    message.preview shouldBe "Hello world..."
+    message.text shouldBe "Hello world"
+    message.html shouldBe "<p>Hello world</p>"
+    message.attachments shouldHaveSize 1
+    message.attachments[0].attachmentId shouldBe "att-1"
+    message.attachments[0].contentDisposition shouldBe ContentDisposition.ATTACHMENT
+    message.inReplyTo shouldBe "msg-0"
+    message.references shouldContainExactly listOf("msg-0")
+    message.headers shouldBe mapOf("X-Custom" to "value")
+    message.size shouldBe 2048
+  }
 
-    "Thread deserialization with last_message_id, message_count, and timestamps" {
-        val raw = """
+  "Thread deserialization with last_message_id, message_count, and timestamps" {
+    val raw = """
         {
             "inbox_id": "inbox-1",
             "thread_id": "thread-1",
@@ -155,22 +167,22 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val thread = json.decodeFromString<Thread>(raw)
+    val thread = json.decodeFromString<Thread>(raw)
 
-        thread.inboxId shouldBe "inbox-1"
-        thread.threadId shouldBe "thread-1"
-        thread.lastMessageId shouldBe "msg-5"
-        thread.messageCount shouldBe 3
-        thread.receivedTimestamp shouldBe Instant.parse("2024-04-01T09:00:00Z")
-        thread.sentTimestamp shouldBe Instant.parse("2024-04-01T10:00:00Z")
-        thread.senders shouldContainExactly listOf("alice@example.com")
-        thread.recipients shouldContainExactly listOf("bob@example.com")
-        thread.subject shouldBe "Meeting"
-        thread.size shouldBe 4096
-    }
+    thread.inboxId shouldBe "inbox-1"
+    thread.threadId shouldBe "thread-1"
+    thread.lastMessageId shouldBe "msg-5"
+    thread.messageCount shouldBe 3
+    thread.receivedTimestamp shouldBe Instant.parse("2024-04-01T09:00:00Z")
+    thread.sentTimestamp shouldBe Instant.parse("2024-04-01T10:00:00Z")
+    thread.senders shouldContainExactly listOf("alice@example.com")
+    thread.recipients shouldContainExactly listOf("bob@example.com")
+    thread.subject shouldBe "Meeting"
+    thread.size shouldBe 4096
+  }
 
-    "Draft deserialization with optional fields null" {
-        val raw = """
+  "Draft deserialization with optional fields null" {
+    val raw = """
         {
             "inbox_id": "inbox-1",
             "draft_id": "draft-1",
@@ -180,24 +192,24 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val draft = json.decodeFromString<Draft>(raw)
+    val draft = json.decodeFromString<Draft>(raw)
 
-        draft.inboxId shouldBe "inbox-1"
-        draft.draftId shouldBe "draft-1"
-        draft.from.shouldBeNull()
-        draft.subject.shouldBeNull()
-        draft.text.shouldBeNull()
-        draft.html.shouldBeNull()
-        draft.preview.shouldBeNull()
-        draft.to.shouldBeEmpty()
-        draft.cc.shouldBeEmpty()
-        draft.bcc.shouldBeEmpty()
-        draft.labels.shouldBeEmpty()
-        draft.attachments.shouldBeEmpty()
-    }
+    draft.inboxId shouldBe "inbox-1"
+    draft.draftId shouldBe "draft-1"
+    draft.from.shouldBeNull()
+    draft.subject.shouldBeNull()
+    draft.text.shouldBeNull()
+    draft.html.shouldBeNull()
+    draft.preview.shouldBeNull()
+    draft.to.shouldBeEmpty()
+    draft.cc.shouldBeEmpty()
+    draft.bcc.shouldBeEmpty()
+    draft.labels.shouldBeEmpty()
+    draft.attachments.shouldBeEmpty()
+  }
 
-    "Domain deserialization with domain_id and verified boolean" {
-        val raw = """
+  "Domain deserialization with domain_id and verified boolean" {
+    val raw = """
         {
             "domain_id": "domain-1",
             "name": "example.com",
@@ -207,15 +219,15 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val domain = json.decodeFromString<Domain>(raw)
+    val domain = json.decodeFromString<Domain>(raw)
 
-        domain.domainId shouldBe "domain-1"
-        domain.name shouldBe "example.com"
-        domain.verified shouldBe true
-    }
+    domain.domainId shouldBe "domain-1"
+    domain.name shouldBe "example.com"
+    domain.verified shouldBe true
+  }
 
-    "Pod deserialization with pod_id" {
-        val raw = """
+  "Pod deserialization with pod_id" {
+    val raw = """
         {
             "pod_id": "pod-1",
             "updated_at": "2024-01-01T00:00:00Z",
@@ -223,15 +235,15 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val pod = json.decodeFromString<Pod>(raw)
+    val pod = json.decodeFromString<Pod>(raw)
 
-        pod.podId shouldBe "pod-1"
-        pod.updatedAt shouldBe Instant.parse("2024-01-01T00:00:00Z")
-        pod.createdAt shouldBe Instant.parse("2024-01-01T00:00:00Z")
-    }
+    pod.podId shouldBe "pod-1"
+    pod.updatedAt shouldBe Instant.parse("2024-01-01T00:00:00Z")
+    pod.createdAt shouldBe Instant.parse("2024-01-01T00:00:00Z")
+  }
 
-    "Webhook deserialization with events list" {
-        val raw = """
+  "Webhook deserialization with events list" {
+    val raw = """
         {
             "webhook_id": "wh-1",
             "url": "https://example.com/webhook",
@@ -241,15 +253,15 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val webhook = json.decodeFromString<Webhook>(raw)
+    val webhook = json.decodeFromString<Webhook>(raw)
 
-        webhook.webhookId shouldBe "wh-1"
-        webhook.url shouldBe "https://example.com/webhook"
-        webhook.events shouldContainExactly listOf("message.received", "message.sent")
-    }
+    webhook.webhookId shouldBe "wh-1"
+    webhook.url shouldBe "https://example.com/webhook"
+    webhook.events shouldContainExactly listOf("message.received", "message.sent")
+  }
 
-    "Attachment deserialization with content_disposition inline enum" {
-        val raw = """
+  "Attachment deserialization with content_disposition inline enum" {
+    val raw = """
         {
             "attachment_id": "att-1",
             "filename": "image.png",
@@ -260,18 +272,18 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val attachment = json.decodeFromString<Attachment>(raw)
+    val attachment = json.decodeFromString<Attachment>(raw)
 
-        attachment.attachmentId shouldBe "att-1"
-        attachment.filename shouldBe "image.png"
-        attachment.size shouldBe 512
-        attachment.contentType shouldBe "image/png"
-        attachment.contentDisposition shouldBe ContentDisposition.INLINE
-        attachment.contentId shouldBe "cid-1"
-    }
+    attachment.attachmentId shouldBe "att-1"
+    attachment.filename shouldBe "image.png"
+    attachment.size shouldBe 512
+    attachment.contentType shouldBe "image/png"
+    attachment.contentDisposition shouldBe ContentDisposition.INLINE
+    attachment.contentId shouldBe "cid-1"
+  }
 
-    "Attachment deserialization with content_disposition attachment enum" {
-        val raw = """
+  "Attachment deserialization with content_disposition attachment enum" {
+    val raw = """
         {
             "attachment_id": "att-2",
             "size": 256,
@@ -279,21 +291,21 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val attachment = json.decodeFromString<Attachment>(raw)
+    val attachment = json.decodeFromString<Attachment>(raw)
 
-        attachment.contentDisposition shouldBe ContentDisposition.ATTACHMENT
-    }
+    attachment.contentDisposition shouldBe ContentDisposition.ATTACHMENT
+  }
 
-    "ContentDisposition enum serializes to inline and attachment strings" {
-        val inlineJson = json.encodeToString(ContentDisposition.INLINE)
-        val attachmentJson = json.encodeToString(ContentDisposition.ATTACHMENT)
+  "ContentDisposition enum serializes to inline and attachment strings" {
+    val inlineJson = json.encodeToString(ContentDisposition.INLINE)
+    val attachmentJson = json.encodeToString(ContentDisposition.ATTACHMENT)
 
-        inlineJson shouldBe "\"inline\""
-        attachmentJson shouldBe "\"attachment\""
-    }
+    inlineJson shouldBe "\"inline\""
+    attachmentJson shouldBe "\"attachment\""
+  }
 
-    "ListEntry deserialization verifies snake_case mapping" {
-        val raw = """
+  "ListEntry deserialization verifies snake_case mapping" {
+    val raw = """
         {
             "entry": "sender@example.com",
             "updated_at": "2024-06-01T00:00:00Z",
@@ -301,15 +313,15 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val listEntry = json.decodeFromString<ListEntry>(raw)
+    val listEntry = json.decodeFromString<ListEntry>(raw)
 
-        listEntry.entry shouldBe "sender@example.com"
-        listEntry.updatedAt shouldBe Instant.parse("2024-06-01T00:00:00Z")
-        listEntry.createdAt shouldBe Instant.parse("2024-06-01T00:00:00Z")
-    }
+    listEntry.entry shouldBe "sender@example.com"
+    listEntry.updatedAt shouldBe Instant.parse("2024-06-01T00:00:00Z")
+    listEntry.createdAt shouldBe Instant.parse("2024-06-01T00:00:00Z")
+  }
 
-    "Metric deserialization verifies event_type mapping" {
-        val raw = """
+  "Metric deserialization verifies event_type mapping" {
+    val raw = """
         {
             "event_type": "message.received",
             "count": 42,
@@ -317,15 +329,15 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val metric = json.decodeFromString<Metric>(raw)
+    val metric = json.decodeFromString<Metric>(raw)
 
-        metric.eventType shouldBe "message.received"
-        metric.count shouldBe 42
-        metric.timestamp shouldBe Instant.parse("2024-07-01T00:00:00Z")
-    }
+    metric.eventType shouldBe "message.received"
+    metric.count shouldBe 42
+    metric.timestamp shouldBe Instant.parse("2024-07-01T00:00:00Z")
+  }
 
-    "ApiKey and CreateApiKeyResponse verify api_key_id and api_key fields" {
-        val apiKeyRaw = """
+  "ApiKey and CreateApiKeyResponse verify api_key_id and api_key fields" {
+    val apiKeyRaw = """
         {
             "api_key_id": "key-1",
             "name": "My Key",
@@ -334,24 +346,24 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val apiKey = json.decodeFromString<ApiKey>(apiKeyRaw)
-        apiKey.apiKeyId shouldBe "key-1"
-        apiKey.name shouldBe "My Key"
+    val apiKey = json.decodeFromString<ApiKey>(apiKeyRaw)
+    apiKey.apiKeyId shouldBe "key-1"
+    apiKey.name shouldBe "My Key"
 
-        val createRaw = """
+    val createRaw = """
         {
             "api_key_id": "key-2",
             "api_key": "sk-secret-value"
         }
         """.trimIndent()
 
-        val createResp = json.decodeFromString<CreateApiKeyResponse>(createRaw)
-        createResp.apiKeyId shouldBe "key-2"
-        createResp.apiKey shouldBe "sk-secret-value"
-    }
+    val createResp = json.decodeFromString<CreateApiKeyResponse>(createRaw)
+    createResp.apiKeyId shouldBe "key-2"
+    createResp.apiKey shouldBe "sk-secret-value"
+  }
 
-    "Unknown fields are ignored during deserialization" {
-        val raw = """
+  "Unknown fields are ignored during deserialization" {
+    val raw = """
         {
             "pod_id": "pod-1",
             "updated_at": "2024-01-01T00:00:00Z",
@@ -361,13 +373,13 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val pod = json.decodeFromString<Pod>(raw)
+    val pod = json.decodeFromString<Pod>(raw)
 
-        pod.podId shouldBe "pod-1"
-    }
+    pod.podId shouldBe "pod-1"
+  }
 
-    "Optional fields default correctly when parsing minimal JSON" {
-        val inboxRaw = """
+  "Optional fields default correctly when parsing minimal JSON" {
+    val inboxRaw = """
         {
             "inbox_id": "inbox-1",
             "email": "test@example.com",
@@ -376,12 +388,12 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val inbox = json.decodeFromString<Inbox>(inboxRaw)
-        inbox.podId.shouldBeNull()
-        inbox.displayName.shouldBeNull()
-        inbox.clientId.shouldBeNull()
+    val inbox = json.decodeFromString<Inbox>(inboxRaw)
+    inbox.podId.shouldBeNull()
+    inbox.displayName.shouldBeNull()
+    inbox.clientId.shouldBeNull()
 
-        val messageRaw = """
+    val messageRaw = """
         {
             "inbox_id": "inbox-1",
             "thread_id": "thread-1",
@@ -394,18 +406,18 @@ class ModelTest : StringSpec({
         }
         """.trimIndent()
 
-        val message = json.decodeFromString<Message>(messageRaw)
-        message.labels.shouldBeEmpty()
-        message.to.shouldBeEmpty()
-        message.cc.shouldBeEmpty()
-        message.bcc.shouldBeEmpty()
-        message.subject.shouldBeNull()
-        message.preview.shouldBeNull()
-        message.text.shouldBeNull()
-        message.html.shouldBeNull()
-        message.attachments.shouldBeEmpty()
-        message.inReplyTo.shouldBeNull()
-        message.references.shouldBeEmpty()
-        message.headers shouldBe emptyMap()
-    }
+    val message = json.decodeFromString<Message>(messageRaw)
+    message.labels.shouldBeEmpty()
+    message.to.shouldBeEmpty()
+    message.cc.shouldBeEmpty()
+    message.bcc.shouldBeEmpty()
+    message.subject.shouldBeNull()
+    message.preview.shouldBeNull()
+    message.text.shouldBeNull()
+    message.html.shouldBeNull()
+    message.attachments.shouldBeEmpty()
+    message.inReplyTo.shouldBeNull()
+    message.references.shouldBeEmpty()
+    message.headers shouldBe emptyMap()
+  }
 })

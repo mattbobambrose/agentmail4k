@@ -5,22 +5,22 @@ import to.agentmail.sdk.AgentMailDsl
 
 @AgentMailDsl
 class CreateApiKeyBuilder {
-    var name: String? = null
+  var name: String? = null
 
-    internal fun build() = CreateApiKeyRequest(name = name)
+  internal fun build() = CreateApiKeyRequest(name = name)
 }
 
 @AgentMailDsl
 class ListApiKeysBuilder {
-    var limit: Int? = null
-    var pageToken: String? = null
-    var ascending: Boolean? = null
+  var limit: Int? = null
+  var pageToken: String? = null
+  var ascending: Boolean? = null
 
-    internal fun toQueryParams(): Map<String, String> = buildMap {
-        limit?.let { put("limit", it.toString()) }
-        pageToken?.let { put("page_token", it) }
-        ascending?.let { put("ascending", it.toString()) }
-    }
+  internal fun toQueryParams(): Map<String, String> = buildMap {
+    limit?.let { put("limit", it.toString()) }
+    pageToken?.let { put("page_token", it) }
+    ascending?.let { put("ascending", it.toString()) }
+  }
 }
 
 @Serializable
