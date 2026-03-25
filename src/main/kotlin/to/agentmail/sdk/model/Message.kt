@@ -3,7 +3,6 @@ package to.agentmail.sdk.model
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import to.agentmail.sdk.AgentMail
 
 @Serializable
 data class Message(
@@ -27,9 +26,7 @@ data class Message(
   val size: Int,
   @SerialName("updated_at") val updatedAt: Instant,
   @SerialName("created_at") val createdAt: Instant,
-) {
-  suspend fun fullMessage(client: AgentMail) = client.inboxes(inboxId).messages.get(messageId)
-}
+)
 
 @Serializable
 data class MessageList(

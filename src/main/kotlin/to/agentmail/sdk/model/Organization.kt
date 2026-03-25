@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Organization(
-    @SerialName("updated_at") val updatedAt: Instant,
-    @SerialName("created_at") val createdAt: Instant,
+  @SerialName("updated_at") val updatedAt: Instant,
+  @SerialName("created_at") val createdAt: Instant,
 )
