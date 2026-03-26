@@ -11,11 +11,15 @@ import com.mattbobambrose.agentmail4k.sdk.builder.CreateWebhookBuilder
 import com.mattbobambrose.agentmail4k.sdk.builder.DeleteThreadBuilder
 import com.mattbobambrose.agentmail4k.sdk.builder.ForwardMessageBuilder
 import com.mattbobambrose.agentmail4k.sdk.builder.ListInboxesBuilder
+import com.mattbobambrose.agentmail4k.sdk.builder.ListMessagesBuilder
 import com.mattbobambrose.agentmail4k.sdk.builder.ListThreadsBuilder
 import com.mattbobambrose.agentmail4k.sdk.builder.QueryMetricsBuilder
+import com.mattbobambrose.agentmail4k.sdk.builder.SendDraftBuilder
 import com.mattbobambrose.agentmail4k.sdk.builder.SendMessageBuilder
 import com.mattbobambrose.agentmail4k.sdk.builder.UpdateInboxBuilder
+import com.mattbobambrose.agentmail4k.sdk.builder.UpdateWebhookBuilder
 import com.mattbobambrose.agentmail4k.sdk.model.MetricsPeriod
+import com.mattbobambrose.agentmail4k.sdk.model.WebhookEvent
 
 class BuilderTest : StringSpec({
 
@@ -213,5 +217,74 @@ class BuilderTest : StringSpec({
   "DeleteThreadBuilder should include permanent param when set" {
     val builder = DeleteThreadBuilder().apply { permanent = true }
     builder.toQueryParams() shouldContainExactly mapOf("permanent" to "true")
+  }
+
+  // --- ListMessagesBuilder query params ---
+
+  "ListMessagesBuilder should produce empty map when no params set" {
+    val builder = ListMessagesBuilder()
+    builder.toQueryParams().shouldBeEmpty()
+  }
+
+  "ListMessagesBuilder should produce all query params correctly" {
+    val builder = ListMessagesBuilder().apply {
+      limit = 50
+      pageToken = "tok"
+      labels = listOf("inbox")
+      before = "2026-01-01"
+      after = "2025-01-01"
+      ascending = true
+      includeSpam = true
+      includeBlocked = false
+      includeTrash = true
+    }
+    builder.toQueryParams() shouldContainExactly mapOf(
+      "limit" to "50",
+      "page_token" to "tok",
+      "labels" to "inbox",
+      "before" to "2026-01-01",
+      "after" to "2025-01-01",
+      "ascending" to "true",
+      "include_spam" to "true",
+      "include_blocked" to "false",
+      "include_trash" to "true",
+    )
+  }
+
+  // --- CreateWebhookBuilder events vararg ---
+
+  "CreateWebhookBuilder events(vararg) should populate events list from enum" {
+    val builder = CreateWebhookBuilder().apply {
+      url = "https://example.com/hook"
+      events(WebhookEvent.MESSAGE_RECEIVED, WebhookEvent.MESSAGE_SENT)
+    }
+    val request = builder.build()
+    request.events shouldBe listOf("message.received", "message.sent")
+  }
+
+  // --- UpdateWebhookBuilder events vararg ---
+
+  "UpdateWebhookBuilder events(vararg) should populate events list from enum" {
+    val builder = UpdateWebhookBuilder().apply {
+      events(WebhookEvent.MESSAGE_BOUNCED, WebhookEvent.DOMAIN_VERIFIED)
+    }
+    val request = builder.build()
+    request.events shouldBe listOf("message.bounced", "domain.verified")
+  }
+
+  // --- SendDraftBuilder ---
+
+  "SendDraftBuilder should serialize labels correctly" {
+    val builder = SendDraftBuilder().apply {
+      labels = listOf("sent", "archived")
+    }
+    val request = builder.build()
+    request.labels shouldBe listOf("sent", "archived")
+  }
+
+  "SendDraftBuilder should serialize null labels" {
+    val builder = SendDraftBuilder()
+    val request = builder.build()
+    request.labels shouldBe null
   }
 })

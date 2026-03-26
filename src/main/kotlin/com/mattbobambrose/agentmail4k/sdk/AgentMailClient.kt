@@ -17,7 +17,7 @@ import com.mattbobambrose.agentmail4k.sdk.resource.ThreadResource
 import com.mattbobambrose.agentmail4k.sdk.resource.WebhookResource
 import java.io.Closeable
 
-class AgentMailClient private constructor(
+class AgentMailClient internal constructor(
   private val httpClient: HttpClient,
 ) : Closeable {
 
