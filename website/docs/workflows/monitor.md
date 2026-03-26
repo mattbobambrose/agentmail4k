@@ -5,7 +5,7 @@ The `monitor` extension function polls an inbox for new messages and invokes a c
 ## Basic Usage
 
 ```kotlin
-import to.agentmail.sdk.workflow.monitor
+import com.mattbobambrose.agentmail4k.sdk.workflow.monitor
 import kotlin.time.Duration.Companion.seconds
 
 val job = client.monitor("inbox_abc") {

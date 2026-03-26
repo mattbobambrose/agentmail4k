@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.pambrose.stable.versions)
+    alias(libs.plugins.pambrose.testing)
     `maven-publish`
     application
 }
@@ -10,7 +11,7 @@ application {
     mainClass.set("MainKt")
 }
 
-group = "to.agentmail"
+group = "com.mattbobambrose.agentmail4k"
 version = "0.1.0"
 
 repositories {
@@ -41,15 +42,11 @@ kotlin {
     }
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
-            groupId = "to.agentmail"
+            groupId = "com.mattbobambrose.agentmail4k"
             artifactId = "agentmail-sdk"
             version = project.version.toString()
 

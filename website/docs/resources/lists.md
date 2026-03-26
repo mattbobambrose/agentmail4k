@@ -25,8 +25,8 @@ Lists are organized by two dimensions:
 ## List Entries
 
 ```kotlin
-import to.agentmail.sdk.model.ListDirection
-import to.agentmail.sdk.model.ListType
+import com.mattbobambrose.agentmail4k.sdk.model.ListDirection
+import com.mattbobambrose.agentmail4k.sdk.model.ListType
 
 val result = client.inboxes("inbox_abc").lists.list(
     direction = ListDirection.BLOCK,

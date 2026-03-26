@@ -6,7 +6,7 @@ Add the dependency to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("to.agentmail:agentmail-sdk:0.1.0")
+    implementation("com.mattbobambrose.agentmail4k:agentmail-sdk:0.1.0")
 }
 ```
 
@@ -24,7 +24,7 @@ The SDK transitively brings in:
 ## Creating a Client
 
 ```kotlin
-import to.agentmail.sdk.AgentMail
+import com.mattbobambrose.agentmail4k.sdk.AgentMail
 
 val client = AgentMail {
     apiKey = "your-api-key"
@@ -57,7 +57,7 @@ AgentMail { apiKey = "..." }.use { client ->
 ## Your First API Call
 
 ```kotlin
-import to.agentmail.sdk.AgentMail
+import com.mattbobambrose.agentmail4k.sdk.AgentMail
 
 suspend fun main() {
     AgentMail().use { client ->

@@ -5,8 +5,8 @@ The `webhookHandler` function creates a handler that verifies and dispatches inc
 ## Basic Usage
 
 ```kotlin
-import to.agentmail.sdk.workflow.webhookHandler
-import to.agentmail.sdk.model.WebhookEvent
+import com.mattbobambrose.agentmail4k.sdk.workflow.webhookHandler
+import com.mattbobambrose.agentmail4k.sdk.model.WebhookEvent
 
 val handler = webhookHandler {
     signingSecret = "whsec_your_secret_here"
