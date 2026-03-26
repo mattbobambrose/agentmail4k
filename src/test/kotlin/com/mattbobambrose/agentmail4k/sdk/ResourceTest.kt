@@ -3,29 +3,23 @@ package com.mattbobambrose.agentmail4k.sdk
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.MockRequestHandleScope
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.toByteArray
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.request.HttpRequestData
-import io.ktor.client.request.HttpResponseData
-import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
 import io.ktor.http.headersOf
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.json.Json
 import com.mattbobambrose.agentmail4k.sdk.internal.ApiPaths
+import com.mattbobambrose.agentmail4k.sdk.model.ListDirection
+import com.mattbobambrose.agentmail4k.sdk.model.ListType
 import com.mattbobambrose.agentmail4k.sdk.resource.ApiKeyResource
 import com.mattbobambrose.agentmail4k.sdk.resource.DomainResource
+import com.mattbobambrose.agentmail4k.sdk.resource.DraftResource
 import com.mattbobambrose.agentmail4k.sdk.resource.InboxResource
 import com.mattbobambrose.agentmail4k.sdk.resource.InboxScope
+import com.mattbobambrose.agentmail4k.sdk.resource.ListResource
 import com.mattbobambrose.agentmail4k.sdk.resource.MessageResource
+import com.mattbobambrose.agentmail4k.sdk.resource.MetricsResource
 import com.mattbobambrose.agentmail4k.sdk.resource.OrganizationResource
 import com.mattbobambrose.agentmail4k.sdk.resource.PodResource
 import com.mattbobambrose.agentmail4k.sdk.resource.PodScope
@@ -421,32 +415,354 @@ class ResourceTest : StringSpec({
     val result = scope.domains.list()
     result.count shouldBe 0
   }
-}) {
-  companion object {
-    private fun mockClient(
-      handler: suspend MockRequestHandleScope.(HttpRequestData) -> HttpResponseData,
-    ): HttpClient {
-      return HttpClient(MockEngine { request -> handler(request) }) {
-        install(ContentNegotiation) {
-          json(Json {
-            ignoreUnknownKeys = true
-            encodeDefaults = false
-            explicitNulls = false
-          })
-        }
-        defaultRequest {
-          url("https://api.agentmail.to/")
-          contentType(ContentType.Application.Json)
-        }
-      }
-    }
 
-    private fun MockRequestHandleScope.respondJson(json: String): HttpResponseData {
-      return respond(
-        content = json.trimIndent(),
-        status = HttpStatusCode.OK,
-        headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
+  // --- URL encoding of special characters ---
+
+  "InboxResource.get() should URL-encode special characters in inboxId" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox%20with%20spaces"
+      respondJson(
+        """
+                {
+                    "inbox_id": "inbox with spaces",
+                    "email": "test@agentmail.to",
+                    "updated_at": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-01-01T00:00:00Z"
+                }
+            """
       )
     }
+    val resource = InboxResource(client, ApiPaths.INBOXES)
+    val result = resource.get("inbox with spaces")
+    result.inboxId shouldBe "inbox with spaces"
   }
-}
+
+  "MessageResource.get() should URL-encode special characters in messageId" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_1/messages/msg%2Fspecial"
+      respondJson(
+        """
+                {
+                    "inbox_id": "inbox_1",
+                    "thread_id": "thread_1",
+                    "message_id": "msg/special",
+                    "timestamp": "2026-01-01T00:00:00Z",
+                    "from": "a@b.com",
+                    "size": 100,
+                    "updated_at": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-01-01T00:00:00Z"
+                }
+            """
+      )
+    }
+    val resource = MessageResource(client, "${ApiPaths.INBOXES}/inbox_1/messages")
+    val result = resource.get("msg/special")
+    result.messageId shouldBe "msg/special"
+  }
+
+  // --- Untested resource operations ---
+
+  "InboxResource.update() sends PATCH with JSON body" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Patch
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_1"
+      val body = request.body.toByteArray().decodeToString()
+      body shouldContain "\"display_name\""
+      body shouldContain "\"Updated Name\""
+      respondJson(
+        """
+                {
+                    "inbox_id": "inbox_1",
+                    "email": "test@agentmail.to",
+                    "display_name": "Updated Name",
+                    "updated_at": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-01-01T00:00:00Z"
+                }
+            """
+      )
+    }
+    val resource = InboxResource(client, ApiPaths.INBOXES)
+    val result = resource.update("inbox_1") { displayName = "Updated Name" }
+    result.displayName shouldBe "Updated Name"
+  }
+
+  "MessageResource.replyAll() sends POST to basePath/{id}/reply-all" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Post
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_1/messages/msg_1/reply-all"
+      val body = request.body.toByteArray().decodeToString()
+      body shouldContain "\"text\""
+      body shouldContain "\"Reply all text\""
+      respondJson("""{"message_id": "msg_3", "thread_id": "thread_1"}""")
+    }
+    val resource = MessageResource(client, "${ApiPaths.INBOXES}/inbox_1/messages")
+    val result = resource.replyAll("msg_1") { text = "Reply all text" }
+    result.messageId shouldBe "msg_3"
+  }
+
+  "MessageResource.forward() sends POST to basePath/{id}/forward" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Post
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_1/messages/msg_1/forward"
+      val body = request.body.toByteArray().decodeToString()
+      body shouldContain "\"to\""
+      body shouldContain "\"fwd@example.com\""
+      respondJson("""{"message_id": "msg_4", "thread_id": "thread_2"}""")
+    }
+    val resource = MessageResource(client, "${ApiPaths.INBOXES}/inbox_1/messages")
+    val result = resource.forward("msg_1") { to = listOf("fwd@example.com") }
+    result.messageId shouldBe "msg_4"
+  }
+
+  "MessageResource.getRaw() sends GET to basePath/{id}/raw" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_1/messages/msg_1/raw"
+      respondJson("""{"raw": "MIME-Version: 1.0\r\nFrom: a@b.com"}""")
+    }
+    val resource = MessageResource(client, "${ApiPaths.INBOXES}/inbox_1/messages")
+    val result = resource.getRaw("msg_1")
+    result.raw shouldContain "MIME-Version"
+  }
+
+  "MessageResource.update() sends PATCH to basePath/{id} with labels" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Patch
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_1/messages/msg_1"
+      val body = request.body.toByteArray().decodeToString()
+      body shouldContain "\"labels\""
+      body shouldContain "\"read\""
+      respondJson(
+        """
+                {
+                    "inbox_id": "inbox_1",
+                    "thread_id": "thread_1",
+                    "message_id": "msg_1",
+                    "labels": ["read"],
+                    "timestamp": "2026-01-01T00:00:00Z",
+                    "from": "a@b.com",
+                    "size": 100,
+                    "updated_at": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-01-01T00:00:00Z"
+                }
+            """
+      )
+    }
+    val resource = MessageResource(client, "${ApiPaths.INBOXES}/inbox_1/messages")
+    val result = resource.update("msg_1") { labels = listOf("read") }
+    result.labels shouldBe listOf("read")
+  }
+
+  "MessageResource.getAttachment() sends GET to basePath/{id}/attachments/{attachmentId}" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_1/messages/msg_1/attachments/att_1"
+      respond(
+        content = "file-content-bytes",
+        status = HttpStatusCode.OK,
+        headers = headersOf(HttpHeaders.ContentType, "application/pdf"),
+      )
+    }
+    val resource = MessageResource(client, "${ApiPaths.INBOXES}/inbox_1/messages")
+    val result = resource.getAttachment("msg_1", "att_1")
+    result.contentType shouldBe "application/pdf"
+    result.data.decodeToString() shouldBe "file-content-bytes"
+  }
+
+  "DomainResource.getZoneFile() sends GET to basePath/{id}/zone-file" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/domains/domain_1/zone-file"
+      respond(
+        content = "zone-file-content",
+        status = HttpStatusCode.OK,
+        headers = headersOf(HttpHeaders.ContentType, "application/octet-stream"),
+      )
+    }
+    val resource = DomainResource(client, ApiPaths.DOMAINS)
+    val result = resource.getZoneFile("domain_1")
+    result.decodeToString() shouldBe "zone-file-content"
+  }
+
+  "DraftResource.send() sends POST to basePath/{id}/send" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Post
+      request.url.encodedPath shouldBe "/v0/drafts/draft_1/send"
+      respondJson("""{"message_id": "msg_5", "thread_id": "thread_3"}""")
+    }
+    val resource = DraftResource(client, ApiPaths.DRAFTS)
+    val result = resource.send("draft_1")
+    result.messageId shouldBe "msg_5"
+  }
+
+  "DraftResource.update() sends PATCH to basePath/{id}" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Patch
+      request.url.encodedPath shouldBe "/v0/drafts/draft_1"
+      val body = request.body.toByteArray().decodeToString()
+      body shouldContain "\"subject\""
+      body shouldContain "\"Updated subject\""
+      respondJson(
+        """
+                {
+                    "inbox_id": "inbox_1",
+                    "draft_id": "draft_1",
+                    "subject": "Updated subject",
+                    "timestamp": "2026-01-01T00:00:00Z",
+                    "updated_at": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-01-01T00:00:00Z"
+                }
+            """
+      )
+    }
+    val resource = DraftResource(client, ApiPaths.DRAFTS)
+    val result = resource.update("draft_1") { subject = "Updated subject" }
+    result.subject shouldBe "Updated subject"
+  }
+
+  "ThreadResource.delete() sends DELETE with permanent query param" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Delete
+      request.url.encodedPath shouldBe "/v0/threads/thread_1"
+      request.url.parameters["permanent"] shouldBe "true"
+      respondJson("{}")
+    }
+    val resource = ThreadResource(client, ApiPaths.THREADS)
+    resource.delete("thread_1") { permanent = true }
+  }
+
+  "ListResource.list() constructs path from direction and type" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/lists/allow/sender"
+      respondJson("""{"count": 0, "entries": []}""")
+    }
+    val resource = ListResource(client, ApiPaths.LISTS)
+    val result = resource.list(ListDirection.ALLOW, ListType.SENDER)
+    result.count shouldBe 0
+  }
+
+  "ListResource.get() constructs path from direction, type, and entry" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/lists/block/domain/spam.com"
+      respondJson(
+        """
+                {
+                    "entry": "spam.com",
+                    "updated_at": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-01-01T00:00:00Z"
+                }
+            """
+      )
+    }
+    val resource = ListResource(client, ApiPaths.LISTS)
+    val result = resource.get(ListDirection.BLOCK, ListType.DOMAIN, "spam.com")
+    result.entry shouldBe "spam.com"
+  }
+
+  "ListResource.delete() sends DELETE to basePath/{direction}/{type}/{entry}" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Delete
+      request.url.encodedPath shouldBe "/v0/lists/block/subject/test@example.com"
+      respondJson("{}")
+    }
+    val resource = ListResource(client, ApiPaths.LISTS)
+    resource.delete(ListDirection.BLOCK, ListType.SUBJECT, "test@example.com")
+  }
+
+  // --- Additional InboxScope paths ---
+
+  "InboxScope lists use correct base path v0/inboxes/{inboxId}/lists" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_99/lists/allow/sender"
+      respondJson("""{"count": 0, "entries": []}""")
+    }
+    val scope = InboxScope(client, "inbox_99")
+    val result = scope.lists.list(ListDirection.ALLOW, ListType.SENDER)
+    result.count shouldBe 0
+  }
+
+  "InboxScope metrics use correct base path v0/inboxes/{inboxId}/metrics" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_99/metrics"
+      respondJson("""{"metrics": []}""")
+    }
+    val scope = InboxScope(client, "inbox_99")
+    val result = scope.metrics.query()
+    result.metrics shouldBe emptyList()
+  }
+
+  "InboxScope apiKeys use correct base path v0/inboxes/{inboxId}/api-keys" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_99/api-keys"
+      respondJson("""{"count": 0, "api_keys": []}""")
+    }
+    val scope = InboxScope(client, "inbox_99")
+    val result = scope.apiKeys.list()
+    result.count shouldBe 0
+  }
+
+  // --- Additional PodScope paths ---
+
+  "PodScope drafts use correct base path v0/pods/{podId}/drafts" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/pods/pod_42/drafts"
+      respondJson("""{"count": 0, "drafts": []}""")
+    }
+    val scope = PodScope(client, "pod_42")
+    val result = scope.drafts.list()
+    result.count shouldBe 0
+  }
+
+  "PodScope lists use correct base path v0/pods/{podId}/lists" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/pods/pod_42/lists/block/domain"
+      respondJson("""{"count": 0, "entries": []}""")
+    }
+    val scope = PodScope(client, "pod_42")
+    val result = scope.lists.list(ListDirection.BLOCK, ListType.DOMAIN)
+    result.count shouldBe 0
+  }
+
+  "PodScope metrics use correct base path v0/pods/{podId}/metrics" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/pods/pod_42/metrics"
+      respondJson("""{"metrics": []}""")
+    }
+    val scope = PodScope(client, "pod_42")
+    val result = scope.metrics.query()
+    result.metrics shouldBe emptyList()
+  }
+
+  "PodScope apiKeys use correct base path v0/pods/{podId}/api-keys" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/pods/pod_42/api-keys"
+      respondJson("""{"count": 0, "api_keys": []}""")
+    }
+    val scope = PodScope(client, "pod_42")
+    val result = scope.apiKeys.list()
+    result.count shouldBe 0
+  }
+
+  "PodScope nested inboxes(id) returns InboxScope with correct path" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_77/messages"
+      respondJson("""{"count": 0, "messages": []}""")
+    }
+    val scope = PodScope(client, "pod_42")
+    val inboxScope = scope.inboxes("inbox_77")
+    val result = inboxScope.messages.list()
+    result.count shouldBe 0
+  }
+})
