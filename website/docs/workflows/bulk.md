@@ -7,7 +7,7 @@ The `bulk` extension function lets you batch multiple operations and execute the
 Send the same message to a list of recipients (one message per recipient):
 
 ```kotlin
-import to.agentmail.sdk.workflow.bulk
+import com.mattbobambrose.agentmail4k.sdk.workflow.bulk
 
 val results = client.bulk {
     send(

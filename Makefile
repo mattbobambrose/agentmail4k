@@ -28,5 +28,8 @@ run:
 mkdocs:
 	cd website && mkdocs gh-deploy
 
+tests:
+	./gradlew --rerun-tasks check
+
 upgrade-wrapper:
 	./gradlew wrapper --gradle-version=9.4.1 --distribution-type=bin

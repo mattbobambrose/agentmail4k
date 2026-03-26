@@ -5,7 +5,7 @@ The `poll` extension function is a simplified wrapper around [Monitor](monitor.m
 ## Usage
 
 ```kotlin
-import to.agentmail.sdk.workflow.poll
+import com.mattbobambrose.agentmail4k.sdk.workflow.poll
 import kotlin.time.Duration.Companion.seconds
 
 val job = client.poll("inbox_abc", interval = 10.seconds) { message ->

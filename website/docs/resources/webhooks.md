@@ -61,7 +61,7 @@ client.webhooks.delete("webhook_123")
 These are available as the `WebhookEvent` enum:
 
 ```kotlin
-import to.agentmail.sdk.model.WebhookEvent
+import com.mattbobambrose.agentmail4k.sdk.model.WebhookEvent
 
 WebhookEvent.MESSAGE_RECEIVED  // "message.received"
 WebhookEvent.MESSAGE_BOUNCED   // "message.bounced"

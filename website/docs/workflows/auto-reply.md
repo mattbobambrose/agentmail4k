@@ -5,7 +5,7 @@ The `autoReply` extension function monitors an inbox and automatically replies t
 ## Basic Usage
 
 ```kotlin
-import to.agentmail.sdk.workflow.autoReply
+import com.mattbobambrose.agentmail4k.sdk.workflow.autoReply
 import kotlin.time.Duration.Companion.seconds
 
 val job = client.autoReply("inbox_abc") {
