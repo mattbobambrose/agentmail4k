@@ -14,7 +14,29 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
+import com.mattbobambrose.agentmail4k.sdk.model.Message
+
+internal val testInstant: Instant = Instant.parse("2026-01-01T00:00:00Z")
+
+internal fun testMessage(
+  messageId: String = "msg_1",
+  inboxId: String = "inbox_1",
+  threadId: String = "thread_1",
+  from: String = "sender@example.com",
+  subject: String = "Test",
+) = Message(
+  inboxId = inboxId,
+  threadId = threadId,
+  messageId = messageId,
+  timestamp = testInstant,
+  from = from,
+  subject = subject,
+  size = 100,
+  updatedAt = testInstant,
+  createdAt = testInstant,
+)
 
 internal val testJson = Json {
   ignoreUnknownKeys = true
