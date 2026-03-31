@@ -15,7 +15,7 @@ suspend fun AgentMailClient.listMessages(
   block: ListMessagesBuilder.() -> Unit = {},
 ) = inboxes(inboxId).messages.list(block)
 
-suspend fun AgentMailClient.fullMessage(message: Message) =
+suspend fun AgentMailClient.toFullMessage(message: Message) =
   inboxes(message.inboxId).messages.get(message.messageId)
 
 suspend fun AgentMailClient.sendMessage(block: SendMessage.() -> Unit): SendMessageResponse {
