@@ -1,4 +1,4 @@
-package com.mattbobambrose.agentmail4k.sdk.workflow
+package com.mattbobambrose.agentmail4k.dsl
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -8,7 +8,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import com.mattbobambrose.agentmail4k.dsl.fullMessage
 import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
 import com.mattbobambrose.agentmail4k.sdk.AgentMailDsl
 import com.mattbobambrose.agentmail4k.sdk.model.Message
@@ -82,7 +81,7 @@ fun AgentMailClient.monitor(
         if (messages.messages.isNotEmpty()) {
           lastTimestamp = messages.messages.first().timestamp.toString()
           for (message in messages.messages.asReversed()) {
-            val msg = if (config.fullMessage) client.fullMessage(message) else message
+            val msg = if (config.fullMessage) client.toFullMessage(message) else message
             config.onMessage?.invoke(msg)
           }
         }

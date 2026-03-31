@@ -1,4 +1,4 @@
-package com.mattbobambrose.agentmail4k.sdk.workflow
+package com.mattbobambrose.agentmail4k.dsl
 
 import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
 import com.mattbobambrose.agentmail4k.sdk.AgentMailDsl

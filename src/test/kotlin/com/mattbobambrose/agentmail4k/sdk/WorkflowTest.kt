@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.JsonObject
 import com.mattbobambrose.agentmail4k.sdk.model.WebhookEvent
-import com.mattbobambrose.agentmail4k.sdk.workflow.webhookHandler
+import com.mattbobambrose.agentmail4k.dsl.webhookHandler
 import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
