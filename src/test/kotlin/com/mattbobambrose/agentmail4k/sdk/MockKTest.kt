@@ -10,9 +10,9 @@ import com.mattbobambrose.agentmail4k.sdk.resource.InboxScope
 import com.mattbobambrose.agentmail4k.sdk.resource.MessageResource
 import com.mattbobambrose.agentmail4k.sdk.resource.PodResource
 import com.mattbobambrose.agentmail4k.sdk.resource.PodScope
-import com.mattbobambrose.agentmail4k.sdk.workflow.autoReply
-import com.mattbobambrose.agentmail4k.sdk.workflow.bulk
-import com.mattbobambrose.agentmail4k.sdk.workflow.monitor
+import com.mattbobambrose.agentmail4k.dsl.autoReply
+import com.mattbobambrose.agentmail4k.dsl.bulk
+import com.mattbobambrose.agentmail4k.dsl.monitor
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery

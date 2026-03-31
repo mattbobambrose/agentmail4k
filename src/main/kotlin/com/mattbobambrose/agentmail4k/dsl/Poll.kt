@@ -1,4 +1,4 @@
-package com.mattbobambrose.agentmail4k.sdk.workflow
+package com.mattbobambrose.agentmail4k.dsl
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
