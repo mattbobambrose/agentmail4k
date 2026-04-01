@@ -2,9 +2,9 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.createInbox
-import com.mattbobambrose.agentmail4k.dsl.sendMessage
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.dsl.createInbox
+import com.agentmail4k.dsl.sendMessage
+import com.agentmail4k.sdk.AgentMailClient
 
 // --8<-- [start:create-client-env]
 suspend fun createClientFromEnv() {

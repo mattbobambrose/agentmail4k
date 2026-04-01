@@ -2,7 +2,7 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.sdk.AgentMailClient
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 

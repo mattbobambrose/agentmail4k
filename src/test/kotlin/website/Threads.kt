@@ -2,11 +2,11 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.deleteThread
-import com.mattbobambrose.agentmail4k.dsl.getThread
-import com.mattbobambrose.agentmail4k.dsl.getThreadAttachment
-import com.mattbobambrose.agentmail4k.dsl.listThreads
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.dsl.deleteThread
+import com.agentmail4k.dsl.getThread
+import com.agentmail4k.dsl.getThreadAttachment
+import com.agentmail4k.dsl.listThreads
+import com.agentmail4k.sdk.AgentMailClient
 
 // --8<-- [start:list-threads]
 suspend fun listThreadsExample() {

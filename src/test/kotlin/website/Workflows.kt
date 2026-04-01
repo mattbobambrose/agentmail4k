@@ -2,11 +2,11 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.autoReply
-import com.mattbobambrose.agentmail4k.dsl.bulk
-import com.mattbobambrose.agentmail4k.dsl.monitor
-import com.mattbobambrose.agentmail4k.dsl.poll
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.dsl.autoReply
+import com.agentmail4k.dsl.bulk
+import com.agentmail4k.dsl.monitor
+import com.agentmail4k.dsl.poll
+import com.agentmail4k.sdk.AgentMailClient
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds

@@ -2,8 +2,8 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.listMessages
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.dsl.listMessages
+import com.agentmail4k.sdk.AgentMailClient
 
 // --8<-- [start:inbox-scope]
 suspend fun inboxScopeExample() {

@@ -27,7 +27,6 @@ run:
 
 kdocs:
 	./gradlew :dokkaGenerate
-
 site:
 	cd website/agentmail && uv run zensical serve
 

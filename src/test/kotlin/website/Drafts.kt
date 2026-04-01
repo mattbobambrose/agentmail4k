@@ -2,14 +2,14 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.createDraft
-import com.mattbobambrose.agentmail4k.dsl.deleteDraft
-import com.mattbobambrose.agentmail4k.dsl.getDraft
-import com.mattbobambrose.agentmail4k.dsl.getDraftAttachment
-import com.mattbobambrose.agentmail4k.dsl.listDrafts
-import com.mattbobambrose.agentmail4k.dsl.sendDraft
-import com.mattbobambrose.agentmail4k.dsl.updateDraft
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.dsl.createDraft
+import com.agentmail4k.dsl.deleteDraft
+import com.agentmail4k.dsl.getDraft
+import com.agentmail4k.dsl.getDraftAttachment
+import com.agentmail4k.dsl.listDrafts
+import com.agentmail4k.dsl.sendDraft
+import com.agentmail4k.dsl.updateDraft
+import com.agentmail4k.sdk.AgentMailClient
 
 // --8<-- [start:create-draft]
 suspend fun createDraftExample() {
