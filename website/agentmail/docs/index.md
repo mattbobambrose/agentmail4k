@@ -1,4 +1,4 @@
-# AgentMail Kotlin DSL
+# agentmail4k -- AgentMail Kotlin DSL
 
 An idiomatic Kotlin DSL for the [AgentMail](https://agentmail.to) API, built on Ktor and kotlinx.serialization.
 
