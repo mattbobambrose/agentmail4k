@@ -24,6 +24,11 @@ site_description = "Kotlin DSL for the AgentMail API"
 # Read more: https://zensical.org/docs/setup/basics/#site_author
 site_author = "Matthew Ambrose"
 
+# The repo_url adds a repository link/badge in the header
+repo_url = "https://github.com/mattbobambrose/agentmail4k"
+repo_name = "mattbobambrose/agentmail4k"
+edit_uri = "edit/master/website/agentmail/docs/"
+
 # The site_url is the canonical URL for your site. When building online
 # documentation you should set this.
 # Read more: https://zensical.org/docs/setup/basics/#site_url
@@ -135,13 +140,13 @@ features = [
     # will generate an edit button for the page. This works for common
     # repository hosting services.
     # https://zensical.org/docs/setup/repository/#content-actions
-    #"content.action.edit",
+    "content.action.edit",
 
     # If you have a repository configured and turn on this feature, Zensical
     # will generate a button that allows the user to view the Markdown
     # code for the current page.
     # https://zensical.org/docs/setup/repository/#content-actions
-    #"content.action.view",
+    "content.action.view",
 
     # Code annotations allow you to add an icon with a tooltip to your
     # code blocks to provide explanations at crucial points.
