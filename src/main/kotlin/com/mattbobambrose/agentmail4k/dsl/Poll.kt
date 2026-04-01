@@ -9,6 +9,7 @@ import com.mattbobambrose.agentmail4k.sdk.model.Message
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
+/** Simplified inbox polling that invokes a handler for each new message at a fixed interval. */
 fun AgentMailClient.poll(
   inboxId: String,
   interval: Duration = 10.seconds,

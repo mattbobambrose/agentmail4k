@@ -7,11 +7,13 @@ import com.mattbobambrose.agentmail4k.sdk.builder.SendMessageBuilder
 import com.mattbobambrose.agentmail4k.sdk.model.SendMessageResponse
 import com.mattbobambrose.agentmail4k.sdk.model.Thread
 
+/** DSL builder for batching multiple send and thread-iteration operations into a single execution. */
 @AgentMailDsl
 class BulkBuilder internal constructor(private val client: AgentMailClient) {
   private val operations = mutableListOf<suspend () -> Unit>()
   private val sendResults = mutableListOf<SendMessageResponse>()
 
+  /** Queues a send operation that delivers a message to each recipient individually. */
   fun send(
     inboxId: String,
     recipients: List<String>,
@@ -28,6 +30,7 @@ class BulkBuilder internal constructor(private val client: AgentMailClient) {
     }
   }
 
+  /** Queues an operation that iterates over all threads in the inbox, handling pagination automatically. */
   fun forEachThread(
     inboxId: String,
     filter: ListThreadsBuilder.() -> Unit = {},
@@ -57,6 +60,7 @@ class BulkBuilder internal constructor(private val client: AgentMailClient) {
   }
 }
 
+/** Executes a batch of send and thread-iteration operations. */
 suspend fun AgentMailClient.bulk(block: BulkBuilder.() -> Unit): List<SendMessageResponse> {
   val builder = BulkBuilder(this).apply(block)
   return builder.execute()

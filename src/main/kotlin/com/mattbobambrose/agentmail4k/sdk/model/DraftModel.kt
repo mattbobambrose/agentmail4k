@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** Represents an email draft with recipients, subject, body content, and attachments. */
 @Serializable
 data class Draft(
   @SerialName("inbox_id") val inboxId: String,
@@ -23,6 +24,7 @@ data class Draft(
   @SerialName("created_at") val createdAt: Instant,
 )
 
+/** Paginated list of drafts. */
 @Serializable
 data class DraftList(
   val count: Int,

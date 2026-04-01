@@ -15,11 +15,13 @@ import com.mattbobambrose.agentmail4k.sdk.builder.UpdateWebhookBuilder
 import com.mattbobambrose.agentmail4k.sdk.model.Webhook
 import com.mattbobambrose.agentmail4k.sdk.model.WebhookList
 
+/** Provides operations for managing webhooks: list, create, get, update, and delete. */
 class WebhookResource internal constructor(
   private val client: HttpClient,
   private val basePath: String,
 ) {
 
+  /** Lists webhooks with optional pagination. */
   suspend fun list(block: ListWebhooksBuilder.() -> Unit = {}): WebhookList {
     val params = ListWebhooksBuilder().apply(block).toQueryParams()
     return client.get(basePath) {
@@ -27,6 +29,7 @@ class WebhookResource internal constructor(
     }.body()
   }
 
+  /** Creates a new webhook. */
   suspend fun create(block: CreateWebhookBuilder.() -> Unit): Webhook {
     val body = CreateWebhookBuilder().apply(block).build()
     return client.post(basePath) {
@@ -34,11 +37,13 @@ class WebhookResource internal constructor(
     }.body()
   }
 
+  /** Retrieves a webhook by ID. */
   suspend fun get(webhookId: String): Webhook {
     require(webhookId.isNotEmpty()) { "Webhook ID must not be empty." }
     return client.get("$basePath/${webhookId.encodeURLPathPart()}").body()
   }
 
+  /** Updates a webhook by ID. */
   suspend fun update(webhookId: String, block: UpdateWebhookBuilder.() -> Unit): Webhook {
     require(webhookId.isNotEmpty()) { "Webhook ID must not be empty." }
     val body = UpdateWebhookBuilder().apply(block).build()
@@ -47,6 +52,7 @@ class WebhookResource internal constructor(
     }.body()
   }
 
+  /** Deletes a webhook by ID. */
   suspend fun delete(webhookId: String) {
     require(webhookId.isNotEmpty()) { "Webhook ID must not be empty." }
     client.delete("$basePath/${webhookId.encodeURLPathPart()}")

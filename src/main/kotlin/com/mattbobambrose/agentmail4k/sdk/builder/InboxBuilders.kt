@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import com.mattbobambrose.agentmail4k.sdk.AgentMailDsl
 
+/** DSL builder for creating a new inbox with optional username, domain, display name, and client ID. */
 @AgentMailDsl
 class CreateInboxBuilder {
   var username: String? = null
@@ -19,6 +20,7 @@ class CreateInboxBuilder {
   )
 }
 
+/** DSL builder for updating an inbox's display name. */
 @AgentMailDsl
 class UpdateInboxBuilder {
   var displayName: String? = null
@@ -29,6 +31,7 @@ class UpdateInboxBuilder {
   }
 }
 
+/** DSL builder for configuring inbox list pagination. */
 @AgentMailDsl
 class ListInboxesBuilder {
   var limit: Int? = null

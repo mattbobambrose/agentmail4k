@@ -2,6 +2,10 @@ package com.mattbobambrose.agentmail4k.sdk.internal
 
 import io.ktor.http.encodeURLPathPart
 
+/**
+ * Centralized constants and path builders for all AgentMail API v0 endpoints.
+ * Path-building functions validate IDs and URL-encode path segments.
+ */
 internal object ApiPaths {
   const val INBOXES = "v0/inboxes"
   const val THREADS = "v0/threads"
@@ -14,11 +18,13 @@ internal object ApiPaths {
   const val API_KEYS = "v0/api-keys"
   const val ORGANIZATIONS = "v0/organizations"
 
+  /** Returns the API path for a specific inbox, validating the ID is non-empty. */
   fun inbox(inboxId: String): String {
     require(inboxId.isNotEmpty()) { "Inbox ID must not be empty." }
     return "$INBOXES/${inboxId.encodeURLPathPart()}"
   }
 
+  /** Returns the API path for a specific pod, validating the ID is non-empty. */
   fun pod(podId: String): String {
     require(podId.isNotEmpty()) { "Pod ID must not be empty." }
     return "$PODS/${podId.encodeURLPathPart()}"

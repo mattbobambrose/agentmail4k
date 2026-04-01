@@ -17,6 +17,12 @@ import com.mattbobambrose.agentmail4k.sdk.resource.ThreadResource
 import com.mattbobambrose.agentmail4k.sdk.resource.WebhookResource
 import java.io.Closeable
 
+/**
+ * Main entry point for the AgentMail SDK. Holds all top-level API resources (inboxes, threads,
+ * drafts, domains, pods, webhooks, lists, metrics, apiKeys, organization). Created via companion
+ * object [invoke] with optional DSL configuration. Implements [Closeable] to release the underlying
+ * HTTP client. Supports scoped access via [inboxes] and [pods] for nested resources.
+ */
 class AgentMailClient internal constructor(
   private val httpClient: HttpClient,
 ) : Closeable {
@@ -32,14 +38,18 @@ class AgentMailClient internal constructor(
   val apiKeys: ApiKeyResource = ApiKeyResource(httpClient, ApiPaths.API_KEYS)
   val organization: OrganizationResource = OrganizationResource(httpClient, ApiPaths.ORGANIZATIONS)
 
+  /** Returns an [InboxScope] for accessing resources nested under the given inbox. */
   fun inboxes(inboxId: String): InboxScope = InboxScope(httpClient, inboxId)
+  /** Returns a [PodScope] for accessing resources nested under the given pod. */
   fun pods(podId: String): PodScope = PodScope(httpClient, podId)
 
+  /** Closes the underlying HTTP client and releases resources. */
   override fun close() {
     httpClient.close()
   }
 
   companion object {
+    /** Creates a new [AgentMailClient] with optional DSL configuration. */
     operator fun invoke(block: AgentMailConfigBuilder.() -> Unit = {}): AgentMailClient {
       val config = AgentMailConfigBuilder().apply(block).build()
       val httpClient = HttpClientFactory.create(config)

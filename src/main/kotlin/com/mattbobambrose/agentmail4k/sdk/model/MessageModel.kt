@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** Represents a complete email message with headers, body, attachments, and metadata. */
 @Serializable
 data class Message(
   @SerialName("inbox_id") val inboxId: String,
@@ -28,6 +29,7 @@ data class Message(
   @SerialName("created_at") val createdAt: Instant,
 )
 
+/** Paginated list of messages. */
 @Serializable
 data class MessageList(
   val count: Int,
@@ -36,12 +38,14 @@ data class MessageList(
   val messages: List<Message>,
 )
 
+/** Response from sending a message, containing the message and thread IDs. */
 @Serializable
 data class SendMessageResponse(
   @SerialName("message_id") val messageId: String,
   @SerialName("thread_id") val threadId: String,
 )
 
+/** Response containing the raw RFC 2822 message content. */
 @Serializable
 data class RawMessageResponse(
   val raw: String,

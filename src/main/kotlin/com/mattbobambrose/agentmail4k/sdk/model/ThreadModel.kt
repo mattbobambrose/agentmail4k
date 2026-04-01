@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** Represents an email thread with participants, subject, message count, and attachments. */
 @Serializable
 data class Thread(
   @SerialName("inbox_id") val inboxId: String,
@@ -24,6 +25,7 @@ data class Thread(
   @SerialName("created_at") val createdAt: Instant,
 )
 
+/** Paginated list of threads. */
 @Serializable
 data class ThreadList(
   val count: Int,

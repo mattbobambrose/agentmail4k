@@ -15,10 +15,12 @@ import com.mattbobambrose.agentmail4k.sdk.model.ListEntry
 import com.mattbobambrose.agentmail4k.sdk.model.ListEntryList
 import com.mattbobambrose.agentmail4k.sdk.model.ListType
 
+/** Provides operations for managing allow/block list entries for filtering by sender, recipient, domain, or subject. */
 class ListResource internal constructor(
   private val client: HttpClient,
   private val basePath: String,
 ) {
+  /** Lists allow/block entries for a given direction and type. */
   suspend fun list(
     direction: ListDirection,
     type: ListType,
@@ -30,6 +32,7 @@ class ListResource internal constructor(
     }.body()
   }
 
+  /** Creates a new allow/block list entry. */
   suspend fun create(
     direction: ListDirection,
     type: ListType,
@@ -41,11 +44,13 @@ class ListResource internal constructor(
     }.body()
   }
 
+  /** Retrieves a specific list entry. */
   suspend fun get(direction: ListDirection, type: ListType, entry: String): ListEntry {
     require(entry.isNotEmpty()) { "List entry must not be empty." }
     return client.get("$basePath/${direction.value}/${type.value}/${entry.encodeURLPathPart()}").body()
   }
 
+  /** Deletes a specific list entry. */
   suspend fun delete(direction: ListDirection, type: ListType, entry: String) {
     require(entry.isNotEmpty()) { "List entry must not be empty." }
     client.delete("$basePath/${direction.value}/${type.value}/${entry.encodeURLPathPart()}")

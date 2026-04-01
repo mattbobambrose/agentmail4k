@@ -3,6 +3,7 @@ package com.mattbobambrose.agentmail4k.sdk.builder
 import kotlinx.serialization.Serializable
 import com.mattbobambrose.agentmail4k.sdk.AgentMailDsl
 
+/** DSL builder for creating a custom domain. Requires a domain name. */
 @AgentMailDsl
 class CreateDomainBuilder {
   var name: String? = null
@@ -13,6 +14,7 @@ class CreateDomainBuilder {
   }
 }
 
+/** DSL builder for updating a custom domain's name. */
 @AgentMailDsl
 class UpdateDomainBuilder {
   var name: String? = null
@@ -20,6 +22,7 @@ class UpdateDomainBuilder {
   internal fun build() = UpdateDomainRequest(name = name)
 }
 
+/** DSL builder for configuring domain list pagination. */
 @AgentMailDsl
 class ListDomainsBuilder {
   var limit: Int? = null

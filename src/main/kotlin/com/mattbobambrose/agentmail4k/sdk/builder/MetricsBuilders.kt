@@ -3,6 +3,7 @@ package com.mattbobambrose.agentmail4k.sdk.builder
 import com.mattbobambrose.agentmail4k.sdk.AgentMailDsl
 import com.mattbobambrose.agentmail4k.sdk.model.MetricsPeriod
 
+/** DSL builder for configuring metrics queries with event types, time range, period, and pagination. */
 @AgentMailDsl
 class QueryMetricsBuilder {
   var eventTypes: String? = null

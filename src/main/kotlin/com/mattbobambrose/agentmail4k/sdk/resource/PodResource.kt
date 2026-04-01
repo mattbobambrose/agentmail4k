@@ -11,11 +11,13 @@ import com.mattbobambrose.agentmail4k.sdk.builder.ListPodsBuilder
 import com.mattbobambrose.agentmail4k.sdk.model.Pod
 import com.mattbobambrose.agentmail4k.sdk.model.PodList
 
+/** Provides operations for managing pods: list, create, get, and delete. */
 class PodResource internal constructor(
   private val client: HttpClient,
   private val basePath: String,
 ) {
 
+  /** Lists pods with optional pagination. */
   suspend fun list(block: ListPodsBuilder.() -> Unit = {}): PodList {
     val params = ListPodsBuilder().apply(block).toQueryParams()
     return client.get(basePath) {
@@ -23,15 +25,18 @@ class PodResource internal constructor(
     }.body()
   }
 
+  /** Creates a new pod. */
   suspend fun create(): Pod {
     return client.post(basePath).body()
   }
 
+  /** Retrieves a pod by ID. */
   suspend fun get(podId: String): Pod {
     require(podId.isNotEmpty()) { "Pod ID must not be empty." }
     return client.get("$basePath/${podId.encodeURLPathPart()}").body()
   }
 
+  /** Deletes a pod by ID. */
   suspend fun delete(podId: String) {
     require(podId.isNotEmpty()) { "Pod ID must not be empty." }
     client.delete("$basePath/${podId.encodeURLPathPart()}")

@@ -2,11 +2,13 @@ package com.mattbobambrose.agentmail4k.sdk.builder
 
 import com.mattbobambrose.agentmail4k.sdk.AgentMailDsl
 
+/** DSL builder for creating a new pod (no configuration needed). */
 @AgentMailDsl
 class CreatePodBuilder {
   internal fun build() = Unit
 }
 
+/** DSL builder for configuring pod list pagination. */
 @AgentMailDsl
 class ListPodsBuilder {
   var limit: Int? = null

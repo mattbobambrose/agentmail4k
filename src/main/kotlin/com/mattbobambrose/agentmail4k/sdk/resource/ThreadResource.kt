@@ -12,10 +12,12 @@ import com.mattbobambrose.agentmail4k.sdk.model.AttachmentData
 import com.mattbobambrose.agentmail4k.sdk.model.Thread
 import com.mattbobambrose.agentmail4k.sdk.model.ThreadList
 
+/** Provides operations for managing email threads: list, get, delete, and retrieve attachments. */
 class ThreadResource internal constructor(
   private val client: HttpClient,
   private val basePath: String,
 ) {
+  /** Lists threads with optional pagination and filtering. */
   suspend fun list(block: ListThreadsBuilder.() -> Unit = {}): ThreadList {
     val params = ListThreadsBuilder().apply(block).toQueryParams()
     return client.get(basePath) {
@@ -23,11 +25,13 @@ class ThreadResource internal constructor(
     }.body()
   }
 
+  /** Retrieves a thread by ID. */
   suspend fun get(threadId: String): Thread {
     require(threadId.isNotEmpty()) { "Thread ID must not be empty." }
     return client.get("$basePath/${threadId.encodeURLPathPart()}").body()
   }
 
+  /** Deletes a thread by ID with optional permanent deletion. */
   suspend fun delete(threadId: String, block: DeleteThreadBuilder.() -> Unit = {}) {
     require(threadId.isNotEmpty()) { "Thread ID must not be empty." }
     val params = DeleteThreadBuilder().apply(block).toQueryParams()
@@ -36,6 +40,7 @@ class ThreadResource internal constructor(
     }
   }
 
+  /** Retrieves a thread attachment's binary data. */
   suspend fun getAttachment(threadId: String, attachmentId: String): AttachmentData {
     require(threadId.isNotEmpty()) { "Thread ID must not be empty." }
     require(attachmentId.isNotEmpty()) { "Attachment ID must not be empty." }

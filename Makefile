@@ -25,8 +25,11 @@ depends:
 run:
 	./gradlew run
 
-mkdocs:
-	cd website && mkdocs gh-deploy
+kdocs:
+	./gradlew :dokkaGenerate
+
+site:
+	cd website/agentmail && uv run zensical serve
 
 tests:
 	./gradlew --rerun-tasks check

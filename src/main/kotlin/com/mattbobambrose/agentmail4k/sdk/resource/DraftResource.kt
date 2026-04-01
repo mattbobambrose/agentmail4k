@@ -18,10 +18,12 @@ import com.mattbobambrose.agentmail4k.sdk.model.Draft
 import com.mattbobambrose.agentmail4k.sdk.model.DraftList
 import com.mattbobambrose.agentmail4k.sdk.model.SendMessageResponse
 
+/** Provides operations for managing email drafts: list, create, get, update, delete, send, and retrieve attachments. */
 class DraftResource internal constructor(
   private val client: HttpClient,
   private val basePath: String,
 ) {
+  /** Lists drafts with optional pagination and filtering. */
   suspend fun list(block: ListDraftsBuilder.() -> Unit = {}): DraftList {
     val params = ListDraftsBuilder().apply(block).toQueryParams()
     return client.get(basePath) {
@@ -29,6 +31,7 @@ class DraftResource internal constructor(
     }.body()
   }
 
+  /** Creates a new email draft. */
   suspend fun create(block: CreateDraftBuilder.() -> Unit): Draft {
     val body = CreateDraftBuilder().apply(block).build()
     return client.post(basePath) {
@@ -36,11 +39,13 @@ class DraftResource internal constructor(
     }.body()
   }
 
+  /** Retrieves a draft by ID. */
   suspend fun get(draftId: String): Draft {
     require(draftId.isNotEmpty()) { "Draft ID must not be empty." }
     return client.get("$basePath/${draftId.encodeURLPathPart()}").body()
   }
 
+  /** Updates an existing draft by ID. */
   suspend fun update(draftId: String, block: UpdateDraftBuilder.() -> Unit): Draft {
     require(draftId.isNotEmpty()) { "Draft ID must not be empty." }
     val body = UpdateDraftBuilder().apply(block).build()
@@ -49,11 +54,13 @@ class DraftResource internal constructor(
     }.body()
   }
 
+  /** Deletes a draft by ID. */
   suspend fun delete(draftId: String) {
     require(draftId.isNotEmpty()) { "Draft ID must not be empty." }
     client.delete("$basePath/${draftId.encodeURLPathPart()}")
   }
 
+  /** Sends a draft as an email message. */
   suspend fun send(draftId: String, block: SendDraftBuilder.() -> Unit = {}): SendMessageResponse {
     require(draftId.isNotEmpty()) { "Draft ID must not be empty." }
     val body = SendDraftBuilder().apply(block).build()
@@ -62,6 +69,7 @@ class DraftResource internal constructor(
     }.body()
   }
 
+  /** Retrieves a draft attachment's binary data by draft and attachment IDs. */
   suspend fun getAttachment(draftId: String, attachmentId: String): AttachmentData {
     require(draftId.isNotEmpty()) { "Draft ID must not be empty." }
     require(attachmentId.isNotEmpty()) { "Attachment ID must not be empty." }

@@ -3,6 +3,7 @@ package com.mattbobambrose.agentmail4k.sdk.builder
 import kotlinx.serialization.Serializable
 import com.mattbobambrose.agentmail4k.sdk.AgentMailDsl
 
+/** Builder for composing an outgoing email with sender, recipients, subject, and body. */
 class SendMessage {
   var from: String = ""
   var to: List<String> = emptyList()
@@ -25,6 +26,7 @@ class SendMessage {
   }
 }
 
+/** DSL builder for sending a message with recipients, subject, and body content. */
 @AgentMailDsl
 class SendMessageBuilder {
   var to: List<String> = emptyList()
@@ -47,6 +49,7 @@ class SendMessageBuilder {
   }
 }
 
+/** DSL builder for composing a reply with text and/or HTML body. */
 @AgentMailDsl
 class ReplyBuilder {
   var text: String? = null
@@ -55,6 +58,7 @@ class ReplyBuilder {
   internal fun build() = ReplyRequest(text = text, html = html)
 }
 
+/** DSL builder for composing a reply-all with text and/or HTML body. */
 @AgentMailDsl
 class ReplyAllBuilder {
   var text: String? = null
@@ -63,6 +67,7 @@ class ReplyAllBuilder {
   internal fun build() = ReplyAllRequest(text = text, html = html)
 }
 
+/** DSL builder for forwarding a message to new recipients. */
 @AgentMailDsl
 class ForwardMessageBuilder {
   var to: List<String> = emptyList()
@@ -85,6 +90,7 @@ class ForwardMessageBuilder {
   }
 }
 
+/** DSL builder for configuring message list pagination, filtering, and inclusion of spam/blocked/trash. */
 @AgentMailDsl
 class ListMessagesBuilder {
   var limit: Int? = null
@@ -110,6 +116,7 @@ class ListMessagesBuilder {
   }
 }
 
+/** DSL builder for updating message labels. */
 @AgentMailDsl
 class UpdateMessageBuilder {
   var labels: List<String>? = null

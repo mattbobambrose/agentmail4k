@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** Represents a pod (isolated workspace) with its ID and timestamps. */
 @Serializable
 data class Pod(
   @SerialName("pod_id") val podId: String,
@@ -11,6 +12,7 @@ data class Pod(
   @SerialName("created_at") val createdAt: Instant,
 )
 
+/** Paginated list of pods. */
 @Serializable
 data class PodList(
   val count: Int,

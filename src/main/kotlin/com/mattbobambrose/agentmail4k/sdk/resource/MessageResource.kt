@@ -20,10 +20,12 @@ import com.mattbobambrose.agentmail4k.sdk.model.MessageList
 import com.mattbobambrose.agentmail4k.sdk.model.RawMessageResponse
 import com.mattbobambrose.agentmail4k.sdk.model.SendMessageResponse
 
+/** Provides operations for managing email messages: list, get, update, send, reply, reply-all, forward, retrieve attachments, and get raw content. */
 class MessageResource internal constructor(
   private val client: HttpClient,
   private val basePath: String,
 ) {
+  /** Lists messages with optional pagination and filtering. */
   suspend fun list(block: ListMessagesBuilder.() -> Unit = {}): MessageList {
     val params = ListMessagesBuilder().apply(block).toQueryParams()
     return client.get(basePath) {
@@ -31,11 +33,13 @@ class MessageResource internal constructor(
     }.body()
   }
 
+  /** Retrieves a message by ID. */
   suspend fun get(messageId: String): Message {
     require(messageId.isNotEmpty()) { "Message ID must not be empty." }
     return client.get("$basePath/${messageId.encodeURLPathPart()}").body()
   }
 
+  /** Updates a message by ID. */
   suspend fun update(messageId: String, block: UpdateMessageBuilder.() -> Unit): Message {
     require(messageId.isNotEmpty()) { "Message ID must not be empty." }
     val body = UpdateMessageBuilder().apply(block).build()
@@ -44,6 +48,7 @@ class MessageResource internal constructor(
     }.body()
   }
 
+  /** Sends a new email message. */
   suspend fun send(block: SendMessageBuilder.() -> Unit): SendMessageResponse {
     val body = SendMessageBuilder().apply(block).build()
     return client.post("$basePath/send") {
@@ -51,6 +56,7 @@ class MessageResource internal constructor(
     }.body()
   }
 
+  /** Sends a reply to a specific message. */
   suspend fun reply(messageId: String, block: ReplyBuilder.() -> Unit): SendMessageResponse {
     require(messageId.isNotEmpty()) { "Message ID must not be empty." }
     val body = ReplyBuilder().apply(block).build()
@@ -59,6 +65,7 @@ class MessageResource internal constructor(
     }.body()
   }
 
+  /** Sends a reply-all to a specific message. */
   suspend fun replyAll(messageId: String, block: ReplyAllBuilder.() -> Unit): SendMessageResponse {
     require(messageId.isNotEmpty()) { "Message ID must not be empty." }
     val body = ReplyAllBuilder().apply(block).build()
@@ -67,6 +74,7 @@ class MessageResource internal constructor(
     }.body()
   }
 
+  /** Forwards a message to new recipients. */
   suspend fun forward(messageId: String, block: ForwardMessageBuilder.() -> Unit): SendMessageResponse {
     require(messageId.isNotEmpty()) { "Message ID must not be empty." }
     val body = ForwardMessageBuilder().apply(block).build()
@@ -75,6 +83,7 @@ class MessageResource internal constructor(
     }.body()
   }
 
+  /** Retrieves a message attachment's binary data. */
   suspend fun getAttachment(messageId: String, attachmentId: String): AttachmentData {
     require(messageId.isNotEmpty()) { "Message ID must not be empty." }
     require(attachmentId.isNotEmpty()) { "Attachment ID must not be empty." }
@@ -86,6 +95,7 @@ class MessageResource internal constructor(
     )
   }
 
+  /** Retrieves the raw RFC 2822 content of a message. */
   suspend fun getRaw(messageId: String): RawMessageResponse {
     require(messageId.isNotEmpty()) { "Message ID must not be empty." }
     return client.get("$basePath/${messageId.encodeURLPathPart()}/raw").body()

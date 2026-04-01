@@ -13,10 +13,12 @@ import com.mattbobambrose.agentmail4k.sdk.builder.ListApiKeysBuilder
 import com.mattbobambrose.agentmail4k.sdk.model.ApiKeyList
 import com.mattbobambrose.agentmail4k.sdk.model.CreateApiKeyResponse
 
+/** Provides operations for managing API keys: list, create, and delete. */
 class ApiKeyResource internal constructor(
   private val client: HttpClient,
   private val basePath: String,
 ) {
+  /** Lists API keys with optional pagination. */
   suspend fun list(block: ListApiKeysBuilder.() -> Unit = {}): ApiKeyList {
     val params = ListApiKeysBuilder().apply(block).toQueryParams()
     return client.get(basePath) {
@@ -24,6 +26,7 @@ class ApiKeyResource internal constructor(
     }.body()
   }
 
+  /** Creates a new API key. */
   suspend fun create(block: CreateApiKeyBuilder.() -> Unit = {}): CreateApiKeyResponse {
     val body = CreateApiKeyBuilder().apply(block).build()
     return client.post(basePath) {
@@ -31,6 +34,7 @@ class ApiKeyResource internal constructor(
     }.body()
   }
 
+  /** Deletes an API key by ID. */
   suspend fun delete(apiKeyId: String) {
     require(apiKeyId.isNotEmpty()) { "API key ID must not be empty." }
     client.delete("$basePath/${apiKeyId.encodeURLPathPart()}")

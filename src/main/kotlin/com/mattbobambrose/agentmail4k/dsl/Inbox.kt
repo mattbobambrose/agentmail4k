@@ -4,9 +4,11 @@ import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
 import com.mattbobambrose.agentmail4k.sdk.builder.ListInboxesBuilder
 import com.mattbobambrose.agentmail4k.sdk.builder.UpdateInboxBuilder
 
+/** Lists all inboxes with optional pagination. */
 suspend fun AgentMailClient.listInboxes(block: ListInboxesBuilder.() -> Unit = {}) =
   inboxes.list(block)
 
+/** Creates a new inbox with the given username, domain, and display name. */
 suspend fun AgentMailClient.createInbox(username: String, domain: String, displayName: String) =
   inboxes.create {
     this.username = username
@@ -14,11 +16,14 @@ suspend fun AgentMailClient.createInbox(username: String, domain: String, displa
     this.displayName = displayName
   }
 
+/** Retrieves an inbox by ID. */
 suspend fun AgentMailClient.getInbox(inboxId: String) =
   inboxes.get(inboxId)
 
+/** Updates an inbox by ID. */
 suspend fun AgentMailClient.updateInbox(inboxId: String, block: UpdateInboxBuilder.() -> Unit) =
   inboxes.update(inboxId, block)
 
+/** Deletes an inbox by ID. */
 suspend fun AgentMailClient.deleteInbox(inboxId: String) =
   inboxes.delete(inboxId)
