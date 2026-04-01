@@ -1,0 +1,1184 @@
+# agentmail4k
+
+> Idiomatic Kotlin DSL for the AgentMail API, built on Ktor and kotlinx.serialization.
+
+A DSL-driven Kotlin client for the AgentMail email API. All API calls are coroutine-native suspend functions. Provides fluent builders for every operation, scoped access to inbox and pod resources, and built-in workflows for polling, auto-reply, bulk sends, and webhook handling.
+
+## Docs
+
+### Getting Started
+
+# Getting Started
+
+## API Key
+
+The SDK requires an AgentMail API key. You can provide it in two ways:
+
+### Environment Variable (recommended)
+
+Set the `AGENTMAIL_API_KEY` environment variable:
+
+```bash
+export AGENTMAIL_API_KEY="your-api-key"
+```
+
+Then create a client with no arguments:
+
+```kotlin
+--8<-- "GettingStarted.kt:create-client-env"
+```
+
+### Explicit API Key
+
+Pass the API key directly in the configuration block:
+
+```kotlin
+--8<-- "GettingStarted.kt:create-client-explicit"
+```
+
+## Send Your First Message
+
+Create an inbox and send a message:
+
+```kotlin
+--8<-- "GettingStarted.kt:quick-start"
+```
+
+## Resource Cleanup
+
+`AgentMailClient` implements `Closeable`. Use Kotlin's `use` extension to ensure the client is closed automatically:
+
+```kotlin
+--8<-- "GettingStarted.kt:use-closeable"
+```
+
+## Next Steps
+
+- [Configuration](configuration.md) -- customize timeouts, retries, and more
+- [Inboxes](inboxes.md) -- create and manage inboxes
+- [Messages](messages.md) -- send, reply, and forward messages
+
+---
+
+### Configuration
+
+# Configuration
+
+The `AgentMailClient` is configured using a DSL builder. All settings have sensible defaults.
+
+## Full Configuration
+
+```kotlin
+--8<-- "Configuration.kt:full-config"
+```
+
+## Defaults
+
+When no configuration is provided, the following defaults apply:
+
+```kotlin
+--8<-- "Configuration.kt:defaults"
+```
+
+## Timeouts
+
+Configure connection, request, and socket timeouts using Kotlin's `Duration` type:
+
+```kotlin
+--8<-- "Configuration.kt:timeout-config"
+```
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `connect` | 10 seconds | Time to establish a connection |
+| `request` | 30 seconds | Total request timeout |
+| `socket` | 30 seconds | Time between data packets |
+
+## Retries
+
+Configure automatic retry behavior for failed requests:
+
+```kotlin
+--8<-- "Configuration.kt:retry-config"
+```
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `maxRetries` | 3 | Number of retry attempts |
+| `retryOnServerErrors` | true | Retry on 5xx server errors |
+
+---
+
+### Inboxes
+
+# Inboxes
+
+Inboxes are email addresses managed by AgentMail. Each inbox can send and receive messages, manage threads, and store drafts.
+
+## Create an Inbox
+
+```kotlin
+--8<-- "Inboxes.kt:create-inbox"
+```
+
+## List Inboxes
+
+```kotlin
+--8<-- "Inboxes.kt:list-inboxes"
+```
+
+## Get an Inbox
+
+```kotlin
+--8<-- "Inboxes.kt:get-inbox"
+```
+
+## Update an Inbox
+
+```kotlin
+--8<-- "Inboxes.kt:update-inbox"
+```
+
+## Delete an Inbox
+
+```kotlin
+--8<-- "Inboxes.kt:delete-inbox"
+```
+
+## Pagination
+
+All list operations support pagination with `pageToken`:
+
+```kotlin
+--8<-- "Inboxes.kt:paginate-inboxes"
+```
+
+The same pagination pattern works for all list operations in the SDK (messages, threads, drafts, etc.).
+
+---
+
+### Messages
+
+# Messages
+
+Messages are emails sent and received through AgentMail inboxes.
+
+## Send a Message
+
+```kotlin
+--8<-- "Messages.kt:send-message"
+```
+
+### CC and BCC
+
+```kotlin
+--8<-- "Messages.kt:send-with-cc-bcc"
+```
+
+## List Messages
+
+```kotlin
+--8<-- "Messages.kt:list-messages"
+```
+
+### Filter Messages
+
+```kotlin
+--8<-- "Messages.kt:filter-messages"
+```
+
+## Full Message Content
+
+List operations return message summaries without body content. Use `toFullMessage()` to fetch the complete message:
+
+```kotlin
+--8<-- "Messages.kt:full-message"
+```
+
+## Reply
+
+```kotlin
+--8<-- "Messages.kt:reply"
+```
+
+## Reply All
+
+```kotlin
+--8<-- "Messages.kt:reply-all"
+```
+
+## Forward
+
+```kotlin
+--8<-- "Messages.kt:forward"
+```
+
+## Update Labels
+
+```kotlin
+--8<-- "Messages.kt:update-message"
+```
+
+## Attachments
+
+```kotlin
+--8<-- "Messages.kt:attachment"
+```
+
+## Raw Message
+
+Get the raw RFC 822 formatted email:
+
+```kotlin
+--8<-- "Messages.kt:raw-message"
+```
+
+---
+
+### Threads
+
+# Threads
+
+Threads group related messages into conversations within an inbox.
+
+## List Threads
+
+```kotlin
+--8<-- "Threads.kt:list-threads"
+```
+
+## Get a Thread
+
+```kotlin
+--8<-- "Threads.kt:get-thread"
+```
+
+## Delete a Thread
+
+```kotlin
+--8<-- "Threads.kt:delete-thread"
+```
+
+## Thread Attachments
+
+```kotlin
+--8<-- "Threads.kt:thread-attachment"
+```
+
+---
+
+### Drafts
+
+# Drafts
+
+Drafts let you compose messages before sending them.
+
+## Create a Draft
+
+```kotlin
+--8<-- "Drafts.kt:create-draft"
+```
+
+## List Drafts
+
+```kotlin
+--8<-- "Drafts.kt:list-drafts"
+```
+
+## Get a Draft
+
+```kotlin
+--8<-- "Drafts.kt:get-draft"
+```
+
+## Update a Draft
+
+```kotlin
+--8<-- "Drafts.kt:update-draft"
+```
+
+## Send a Draft
+
+Create a draft, review it, then send:
+
+```kotlin
+--8<-- "Drafts.kt:send-draft"
+```
+
+## Delete a Draft
+
+```kotlin
+--8<-- "Drafts.kt:delete-draft"
+```
+
+## Draft Attachments
+
+```kotlin
+--8<-- "Drafts.kt:draft-attachment"
+```
+
+---
+
+### Domains
+
+# Domains
+
+Custom domains allow you to send and receive email from your own domain.
+
+## Create a Domain
+
+```kotlin
+--8<-- "Domains.kt:create-domain"
+```
+
+## List Domains
+
+```kotlin
+--8<-- "Domains.kt:list-domains"
+```
+
+## Get a Domain
+
+```kotlin
+--8<-- "Domains.kt:get-domain"
+```
+
+## Update a Domain
+
+```kotlin
+--8<-- "Domains.kt:update-domain"
+```
+
+## Verify a Domain
+
+After creating a domain, you need to add DNS records and verify ownership:
+
+```kotlin
+--8<-- "Domains.kt:verify-domain"
+```
+
+## Get Zone File
+
+Retrieve the DNS zone file for a domain:
+
+```kotlin
+--8<-- "Domains.kt:zone-file"
+```
+
+## Delete a Domain
+
+```kotlin
+--8<-- "Domains.kt:delete-domain"
+```
+
+---
+
+### Pods
+
+# Pods
+
+Pods are workspace containers that group inboxes, domains, and other resources together.
+
+## Create a Pod
+
+```kotlin
+--8<-- "Pods.kt:create-pod"
+```
+
+## List Pods
+
+```kotlin
+--8<-- "Pods.kt:list-pods"
+```
+
+## Get a Pod
+
+```kotlin
+--8<-- "Pods.kt:get-pod"
+```
+
+## Delete a Pod
+
+```kotlin
+--8<-- "Pods.kt:delete-pod"
+```
+
+See [Scoped Access](scoped-access.md) for working with resources within a pod.
+
+---
+
+### Webhooks
+
+# Webhooks
+
+Webhooks notify your application when events occur in AgentMail.
+
+## Create a Webhook
+
+```kotlin
+--8<-- "Webhooks.kt:create-webhook"
+```
+
+### Available Events
+
+| Event | Description |
+|-------|-------------|
+| `MESSAGE_RECEIVED` | A new message was received |
+| `MESSAGE_SENT` | A message was sent |
+| `MESSAGE_DELIVERED` | A message was delivered |
+| `MESSAGE_BOUNCED` | A message bounced |
+| `MESSAGE_COMPLAINED` | A spam complaint was received |
+| `MESSAGE_REJECTED` | A message was rejected |
+| `DOMAIN_VERIFIED` | A domain was verified |
+
+## List Webhooks
+
+```kotlin
+--8<-- "Webhooks.kt:list-webhooks"
+```
+
+## Get a Webhook
+
+```kotlin
+--8<-- "Webhooks.kt:get-webhook"
+```
+
+## Update a Webhook
+
+```kotlin
+--8<-- "Webhooks.kt:update-webhook"
+```
+
+## Delete a Webhook
+
+```kotlin
+--8<-- "Webhooks.kt:delete-webhook"
+```
+
+## Webhook Handler
+
+The SDK includes a webhook handler that verifies signatures and routes events to handlers.
+
+### Basic Handler
+
+```kotlin
+--8<-- "Webhooks.kt:webhook-handler"
+```
+
+### Custom Event Handlers
+
+Use the generic `on()` method for any event type:
+
+```kotlin
+--8<-- "Webhooks.kt:webhook-handler-custom"
+```
+
+### Signature Verification
+
+Webhooks are signed using HMAC-SHA256 (Svix format). The handler verifies signatures automatically when `signingSecret` is set.
+
+You can also verify signatures without dispatching:
+
+```kotlin
+--8<-- "Webhooks.kt:webhook-verify"
+```
+
+---
+
+### Allow/Block Lists
+
+# Allow/Block Lists
+
+Lists let you control which senders, recipients, domains, or subjects are allowed or blocked.
+
+## List Direction and Type
+
+Every list operation requires a `ListDirection` and `ListType`:
+
+- **Direction**: `ALLOW` or `BLOCK`
+- **Type**: `SENDER`, `RECIPIENT`, `DOMAIN`, or `SUBJECT`
+
+## Block a Sender
+
+```kotlin
+--8<-- "Lists.kt:block-sender"
+```
+
+## Allow a Domain
+
+```kotlin
+--8<-- "Lists.kt:allow-domain"
+```
+
+## List Entries
+
+```kotlin
+--8<-- "Lists.kt:list-entries"
+```
+
+## Get an Entry
+
+```kotlin
+--8<-- "Lists.kt:get-entry"
+```
+
+## Delete an Entry
+
+```kotlin
+--8<-- "Lists.kt:delete-entry"
+```
+
+## Other List Types
+
+Block by subject or recipient:
+
+```kotlin
+--8<-- "Lists.kt:list-types"
+```
+
+---
+
+### Metrics & Organization
+
+# Metrics & Organization
+
+## Query Metrics
+
+Retrieve email metrics for your account:
+
+```kotlin
+--8<-- "Metrics.kt:query-metrics"
+```
+
+### Metric Periods
+
+Query metrics at different time granularities:
+
+```kotlin
+--8<-- "Metrics.kt:metrics-period"
+```
+
+| Period | Description |
+|--------|-------------|
+| `HOUR` | Hourly aggregation |
+| `DAY` | Daily aggregation |
+| `WEEK` | Weekly aggregation |
+| `MONTH` | Monthly aggregation |
+
+## Organization
+
+Retrieve your organization information:
+
+```kotlin
+--8<-- "Metrics.kt:get-organization"
+```
+
+---
+
+### Scoped Access
+
+# Scoped Access
+
+The SDK provides two ways to interact with resources: top-level DSL functions and scoped access. Scoped access is useful when performing multiple operations on the same inbox or pod.
+
+## Inbox Scope
+
+Use `client.inboxes(inboxId)` to get a scoped view of an inbox's resources:
+
+```kotlin
+--8<-- "ScopedAccess.kt:inbox-scope"
+```
+
+### Available Resources
+
+```kotlin
+--8<-- "ScopedAccess.kt:inbox-scope-resources"
+```
+
+## Pod Scope
+
+Use `client.pods(podId)` to get a scoped view of a pod's resources:
+
+```kotlin
+--8<-- "ScopedAccess.kt:pod-scope"
+```
+
+### Available Resources
+
+```kotlin
+--8<-- "ScopedAccess.kt:pod-scope-resources"
+```
+
+## DSL vs Scoped Access
+
+Both approaches access the same API. Choose based on your use case:
+
+```kotlin
+--8<-- "ScopedAccess.kt:dsl-vs-scope"
+```
+
+**Use DSL functions** when performing a single operation -- they're concise and read naturally.
+
+**Use scoped access** when performing multiple operations on the same inbox or pod -- you avoid passing the ID repeatedly and make the grouping explicit.
+
+---
+
+### Workflows
+
+# Workflows
+
+The SDK includes high-level workflow utilities built on top of the core API.
+
+## Monitor
+
+Monitor an inbox for new messages by polling at a configurable interval. Returns a coroutine `Job` that runs in the background.
+
+```kotlin
+--8<-- "Workflows.kt:monitor"
+```
+
+### Full Message Content
+
+Use `onFullMessage` instead of `onMessage` to receive complete message bodies:
+
+```kotlin
+--8<-- "Workflows.kt:monitor-full"
+```
+
+## Poll
+
+`poll()` is a simplified wrapper around `monitor()` for the common case of just handling messages:
+
+```kotlin
+--8<-- "Workflows.kt:poll"
+```
+
+## Auto-Reply
+
+Set up automatic replies with pattern-matching rules:
+
+```kotlin
+--8<-- "Workflows.kt:auto-reply"
+```
+
+Rules are evaluated in order. The first matching rule handles the message. If no rule matches, the `default` reply is used (if defined).
+
+## Bulk Operations
+
+### Send to Multiple Recipients
+
+```kotlin
+--8<-- "Workflows.kt:bulk-send"
+```
+
+### Process All Threads
+
+Iterate over all threads in an inbox with automatic pagination:
+
+```kotlin
+--8<-- "Workflows.kt:bulk-threads"
+```
+
+---
+
+## API
+
+### AgentMailClient
+
+```kotlin
+/**
+ * Main entry point for the AgentMail SDK. Holds all top-level API resources (inboxes, threads,
+ * drafts, domains, pods, webhooks, lists, metrics, apiKeys, organization). Created via companion
+ * object [invoke] with optional DSL configuration. Implements [Closeable] to release the underlying
+ * HTTP client. Supports scoped access via [inboxes] and [pods] for nested resources.
+ */
+class AgentMailClient : Closeable {
+
+  val inboxes: InboxResource
+  val threads: ThreadResource
+  val drafts: DraftResource
+  val domains: DomainResource
+  val pods: PodResource
+  val webhooks: WebhookResource
+  val lists: ListResource
+  val metrics: MetricsResource
+  val apiKeys: ApiKeyResource
+  val organization: OrganizationResource
+
+  /** Returns an [InboxScope] for accessing resources nested under the given inbox. */
+  fun inboxes(inboxId: String): InboxScope
+
+  /** Returns a [PodScope] for accessing resources nested under the given pod. */
+  fun pods(podId: String): PodScope
+
+  /** Closes the underlying HTTP client and releases resources. */
+  override fun close()
+
+  companion object {
+    /** Creates a new [AgentMailClient] with optional DSL configuration. */
+    operator fun invoke(block: AgentMailConfigBuilder.() -> Unit = {}): AgentMailClient
+  }
+}
+```
+
+---
+
+### AgentMailConfig
+
+```kotlin
+/** DSL builder for configuring an [AgentMailClient] instance. Allows setting the API key, base URL, timeout, and retry settings. */
+class AgentMailConfigBuilder {
+  var apiKey: String?
+  var baseUrl: String
+
+  /** Configures HTTP timeout settings. */
+  fun timeout(block: TimeoutBuilder.() -> Unit)
+
+  /** Configures HTTP retry settings. */
+  fun retry(block: RetryBuilder.() -> Unit)
+}
+
+/** Immutable configuration for the AgentMail HTTP client. */
+data class AgentMailConfig(
+  val apiKey: String,
+  val baseUrl: String,
+  val timeout: TimeoutConfig,
+  val retry: RetryConfig,
+)
+
+/** DSL builder for configuring HTTP timeout durations. */
+class TimeoutBuilder {
+  var connect: Duration
+  var request: Duration
+  var socket: Duration
+}
+
+/** Immutable timeout configuration with connect, request, and socket durations. */
+data class TimeoutConfig(
+  val connect: Duration,
+  val request: Duration,
+  val socket: Duration,
+)
+
+/** DSL builder for configuring HTTP retry behavior. */
+class RetryBuilder {
+  var maxRetries: Int
+  var retryOnServerErrors: Boolean
+}
+
+/** Immutable retry configuration with max retries and server error retry toggle. */
+data class RetryConfig(
+  val maxRetries: Int,
+  val retryOnServerErrors: Boolean,
+)
+```
+
+---
+
+### InboxResource
+
+```kotlin
+/** Provides operations for managing inboxes: list, create, get, update, and delete. */
+class InboxResource {
+
+  /** Lists inboxes with optional pagination. */
+  suspend fun list(block: ListInboxesBuilder.() -> Unit = {}): InboxList
+
+  /** Creates a new inbox. */
+  suspend fun create(block: CreateInboxBuilder.() -> Unit = {}): Inbox
+
+  /** Retrieves an inbox by ID. */
+  suspend fun get(inboxId: String): Inbox
+
+  /** Updates an inbox by ID. */
+  suspend fun update(inboxId: String, block: UpdateInboxBuilder.() -> Unit): Inbox
+
+  /** Deletes an inbox by ID. */
+  suspend fun delete(inboxId: String)
+}
+```
+
+---
+
+### MessageResource
+
+```kotlin
+/** Provides operations for managing email messages: list, get, update, send, reply, reply-all, forward, retrieve attachments, and get raw content. */
+class MessageResource {
+
+  /** Lists messages with optional pagination and filtering. */
+  suspend fun list(block: ListMessagesBuilder.() -> Unit = {}): MessageList
+
+  /** Retrieves a message by ID. */
+  suspend fun get(messageId: String): Message
+
+  /** Updates a message by ID. */
+  suspend fun update(messageId: String, block: UpdateMessageBuilder.() -> Unit): Message
+
+  /** Sends a new email message. */
+  suspend fun send(block: SendMessageBuilder.() -> Unit): SendMessageResponse
+
+  /** Sends a reply to a specific message. */
+  suspend fun reply(messageId: String, block: ReplyBuilder.() -> Unit): SendMessageResponse
+
+  /** Sends a reply-all to a specific message. */
+  suspend fun replyAll(messageId: String, block: ReplyAllBuilder.() -> Unit): SendMessageResponse
+
+  /** Forwards a message to new recipients. */
+  suspend fun forward(messageId: String, block: ForwardMessageBuilder.() -> Unit): SendMessageResponse
+
+  /** Retrieves a message attachment's binary data. */
+  suspend fun getAttachment(messageId: String, attachmentId: String): AttachmentData
+
+  /** Retrieves the raw RFC 2822 content of a message. */
+  suspend fun getRaw(messageId: String): RawMessageResponse
+}
+```
+
+---
+
+### ThreadResource
+
+```kotlin
+/** Provides operations for managing email threads: list, get, delete, and retrieve attachments. */
+class ThreadResource {
+
+  /** Lists threads with optional pagination and filtering. */
+  suspend fun list(block: ListThreadsBuilder.() -> Unit = {}): ThreadList
+
+  /** Retrieves a thread by ID. */
+  suspend fun get(threadId: String): Thread
+
+  /** Deletes a thread by ID with optional permanent deletion. */
+  suspend fun delete(threadId: String, block: DeleteThreadBuilder.() -> Unit = {})
+
+  /** Retrieves a thread attachment's binary data. */
+  suspend fun getAttachment(threadId: String, attachmentId: String): AttachmentData
+}
+```
+
+---
+
+### DraftResource
+
+```kotlin
+/** Provides operations for managing email drafts: list, create, get, update, delete, send, and retrieve attachments. */
+class DraftResource {
+
+  /** Lists drafts with optional pagination and filtering. */
+  suspend fun list(block: ListDraftsBuilder.() -> Unit = {}): DraftList
+
+  /** Creates a new email draft. */
+  suspend fun create(block: CreateDraftBuilder.() -> Unit): Draft
+
+  /** Retrieves a draft by ID. */
+  suspend fun get(draftId: String): Draft
+
+  /** Updates an existing draft by ID. */
+  suspend fun update(draftId: String, block: UpdateDraftBuilder.() -> Unit): Draft
+
+  /** Deletes a draft by ID. */
+  suspend fun delete(draftId: String)
+
+  /** Sends a draft as an email message. */
+  suspend fun send(draftId: String, block: SendDraftBuilder.() -> Unit = {}): SendMessageResponse
+
+  /** Retrieves a draft attachment's binary data by draft and attachment IDs. */
+  suspend fun getAttachment(draftId: String, attachmentId: String): AttachmentData
+}
+```
+
+---
+
+### DomainResource
+
+```kotlin
+/** Provides operations for managing custom domains: list, create, get, update, delete, verify, and retrieve zone files. */
+class DomainResource {
+
+  /** Lists custom domains with optional pagination. */
+  suspend fun list(block: ListDomainsBuilder.() -> Unit = {}): DomainList
+
+  /** Creates a new custom domain. */
+  suspend fun create(block: CreateDomainBuilder.() -> Unit): Domain
+
+  /** Retrieves a domain by ID. */
+  suspend fun get(domainId: String): Domain
+
+  /** Updates a domain by ID. */
+  suspend fun update(domainId: String, block: UpdateDomainBuilder.() -> Unit): Domain
+
+  /** Deletes a domain by ID. */
+  suspend fun delete(domainId: String)
+
+  /** Triggers DNS verification for a domain. */
+  suspend fun verify(domainId: String)
+
+  /** Retrieves the DNS zone file for a domain as raw bytes. */
+  suspend fun getZoneFile(domainId: String): ByteArray
+}
+```
+
+---
+
+### PodResource
+
+```kotlin
+/** Provides operations for managing pods: list, create, get, and delete. */
+class PodResource {
+
+  /** Lists pods with optional pagination. */
+  suspend fun list(block: ListPodsBuilder.() -> Unit = {}): PodList
+
+  /** Creates a new pod. */
+  suspend fun create(): Pod
+
+  /** Retrieves a pod by ID. */
+  suspend fun get(podId: String): Pod
+
+  /** Deletes a pod by ID. */
+  suspend fun delete(podId: String)
+}
+```
+
+---
+
+### WebhookResource
+
+```kotlin
+/** Provides operations for managing webhooks: list, create, get, update, and delete. */
+class WebhookResource {
+
+  /** Lists webhooks with optional pagination. */
+  suspend fun list(block: ListWebhooksBuilder.() -> Unit = {}): WebhookList
+
+  /** Creates a new webhook. */
+  suspend fun create(block: CreateWebhookBuilder.() -> Unit): Webhook
+
+  /** Retrieves a webhook by ID. */
+  suspend fun get(webhookId: String): Webhook
+
+  /** Updates a webhook by ID. */
+  suspend fun update(webhookId: String, block: UpdateWebhookBuilder.() -> Unit): Webhook
+
+  /** Deletes a webhook by ID. */
+  suspend fun delete(webhookId: String)
+}
+```
+
+---
+
+### ListResource
+
+```kotlin
+/** Provides operations for managing allow/block list entries for filtering by sender, recipient, domain, or subject. */
+class ListResource {
+
+  /** Lists allow/block entries for a given direction and type. */
+  suspend fun list(
+    direction: ListDirection,
+    type: ListType,
+    block: ListEntriesBuilder.() -> Unit = {},
+  ): ListEntryList
+
+  /** Creates a new allow/block list entry. */
+  suspend fun create(
+    direction: ListDirection,
+    type: ListType,
+    block: CreateListEntryBuilder.() -> Unit,
+  ): ListEntry
+
+  /** Retrieves a specific list entry. */
+  suspend fun get(direction: ListDirection, type: ListType, entry: String): ListEntry
+
+  /** Deletes a specific list entry. */
+  suspend fun delete(direction: ListDirection, type: ListType, entry: String)
+}
+```
+
+---
+
+### MetricsResource
+
+```kotlin
+/** Provides operations for querying email event metrics. */
+class MetricsResource {
+
+  /** Queries email event metrics with optional filters and aggregation. */
+  suspend fun query(block: QueryMetricsBuilder.() -> Unit = {}): QueryMetricsResponse
+}
+```
+
+---
+
+### InboxScope
+
+```kotlin
+/** Scoped access to resources nested under a specific inbox, including messages, threads, drafts, lists, metrics, and API keys. */
+class InboxScope {
+
+  val messages: MessageResource
+  val threads: ThreadResource
+  val drafts: DraftResource
+  val lists: ListResource
+  val metrics: MetricsResource
+  val apiKeys: ApiKeyResource
+}
+```
+
+---
+
+### PodScope
+
+```kotlin
+/** Scoped access to resources nested under a specific pod, including inboxes, threads, drafts, domains, lists, metrics, and API keys. */
+class PodScope {
+
+  val inboxes: InboxResource
+  val threads: ThreadResource
+  val drafts: DraftResource
+  val domains: DomainResource
+  val lists: ListResource
+  val metrics: MetricsResource
+  val apiKeys: ApiKeyResource
+
+  fun inboxes(inboxId: String): InboxScope
+}
+```
+
+---
+
+### WebhookHandler
+
+```kotlin
+/** DSL builder for configuring webhook event handlers with optional signature verification. */
+class WebhookHandlerBuilder {
+  var signingSecret: String?
+
+  /** Registers a handler for a specific webhook [event]. */
+  fun on(event: WebhookEvent, handler: suspend (JsonObject) -> Unit)
+
+  /** Registers a handler for the message.received event. */
+  fun onMessageReceived(handler: suspend (JsonObject) -> Unit)
+
+  /** Registers a handler for the message.sent event. */
+  fun onMessageSent(handler: suspend (JsonObject) -> Unit)
+
+  /** Registers a handler for the message.delivered event. */
+  fun onMessageDelivered(handler: suspend (JsonObject) -> Unit)
+
+  /** Registers a handler for the message.bounced event. */
+  fun onMessageBounced(handler: suspend (JsonObject) -> Unit)
+
+  /** Registers a handler for the message.complained event. */
+  fun onMessageComplained(handler: suspend (JsonObject) -> Unit)
+
+  /** Registers a handler for the message.rejected event. */
+  fun onMessageRejected(handler: suspend (JsonObject) -> Unit)
+
+  /** Registers a handler for the domain.verified event. */
+  fun onDomainVerified(handler: suspend (JsonObject) -> Unit)
+}
+
+/** Processes incoming webhook payloads with optional HMAC-SHA256 signature verification and event-specific handlers. */
+class WebhookHandler {
+
+  /** Verifies the HMAC-SHA256 signature of a webhook payload. Returns true if valid or if no signing secret is configured. */
+  fun verify(headers: Map<String, String>, body: String): Boolean
+
+  /** Verifies and dispatches a webhook payload to the appropriate event handler. Returns false if signature verification fails. */
+  suspend fun handle(headers: Map<String, String>, body: String): Boolean
+}
+
+/** Creates a [WebhookHandler] using the DSL builder. */
+fun webhookHandler(block: WebhookHandlerBuilder.() -> Unit): WebhookHandler
+```
+
+---
+
+### Monitor
+
+```kotlin
+/** DSL builder for configuring inbox monitoring with message handlers, error handlers, and polling settings. */
+class MonitorBuilder {
+  var pollInterval: Duration
+  var includeSpam: Boolean
+  var includeBlocked: Boolean
+
+  /** Sets the handler invoked for each new message (preview content only). */
+  fun onMessage(handler: suspend (Message) -> Unit)
+
+  /** Sets the handler invoked for each new message (fetches full content). */
+  fun onFullMessage(handler: suspend (Message) -> Unit)
+
+  /** Sets the handler invoked when a polling error occurs. */
+  fun onError(handler: suspend (Throwable) -> Unit)
+}
+
+/** Starts a coroutine that polls an inbox for new messages and invokes handlers. */
+fun AgentMailClient.monitor(
+  inboxId: String,
+  scope: CoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
+  block: MonitorBuilder.() -> Unit,
+): Job
+```
+
+---
+
+### AutoReply
+
+```kotlin
+/** DSL builder for configuring automatic reply rules with match conditions and reply actions. */
+class AutoReplyBuilder {
+  var pollInterval: Duration
+
+  /** Adds an auto-reply rule that replies when the [match] predicate returns true. */
+  fun rule(
+    match: (Message) -> Boolean,
+    reply: ReplyBuilder.(Message) -> Unit,
+  )
+
+  /** Sets the default reply action for messages that don't match any rule. */
+  fun default(reply: ReplyBuilder.(Message) -> Unit)
+}
+
+/** Starts an auto-reply monitor on the given inbox that automatically replies to incoming messages based on configured rules. */
+fun AgentMailClient.autoReply(
+  inboxId: String,
+  scope: CoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
+  block: AutoReplyBuilder.() -> Unit,
+): Job
+```
+
+---
+
+### Bulk
+
+```kotlin
+/** DSL builder for batching multiple send and thread-iteration operations into a single execution. */
+class BulkBuilder {
+
+  /** Queues a send operation that delivers a message to each recipient individually. */
+  fun send(
+    inboxId: String,
+    recipients: List<String>,
+    block: SendMessageBuilder.() -> Unit,
+  )
+
+  /** Queues an operation that iterates over all threads in the inbox, handling pagination automatically. */
+  fun forEachThread(
+    inboxId: String,
+    filter: ListThreadsBuilder.() -> Unit = {},
+    action: suspend (Thread) -> Unit,
+  )
+}
+
+/** Executes a batch of send and thread-iteration operations. */
+suspend fun AgentMailClient.bulk(block: BulkBuilder.() -> Unit): List<SendMessageResponse>
+```
+
+---
+
+## Optional
+
+- [License](LICENSE.md)
