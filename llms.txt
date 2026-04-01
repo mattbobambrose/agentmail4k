@@ -1,0 +1,45 @@
+# agentmail4k
+
+> Idiomatic Kotlin DSL for the AgentMail API, built on Ktor and kotlinx.serialization.
+
+A DSL-driven Kotlin client for the AgentMail email API. All API calls are coroutine-native suspend functions. Provides fluent builders for every operation, scoped access to inbox and pod resources, and built-in workflows for polling, auto-reply, bulk sends, and webhook handling.
+
+## Docs
+
+- [Getting Started](website/agentmail/docs/getting-started.md): Set up your API key and send your first message
+- [Configuration](website/agentmail/docs/configuration.md): Customize timeouts, retries, and base URL
+- [Inboxes](website/agentmail/docs/inboxes.md): Create, list, update, and delete inboxes
+- [Messages](website/agentmail/docs/messages.md): Send, reply, forward, list, and manage email messages
+- [Threads](website/agentmail/docs/threads.md): List, retrieve, and delete email threads
+- [Drafts](website/agentmail/docs/drafts.md): Compose, update, send, and manage email drafts
+- [Domains](website/agentmail/docs/domains.md): Custom domain creation, verification, and DNS management
+- [Pods](website/agentmail/docs/pods.md): Isolated workspace management and scoped access
+- [Webhooks](website/agentmail/docs/webhooks.md): Webhook creation, event handling, and signature verification
+- [Lists](website/agentmail/docs/lists.md): Allow/block lists for senders, recipients, domains, and subjects
+- [Metrics](website/agentmail/docs/metrics.md): Email event metrics and organization information
+- [Scoped Access](website/agentmail/docs/scoped-access.md): Inbox and pod scoped access patterns
+- [Workflows](website/agentmail/docs/workflows.md): Polling, auto-reply, bulk operations, and webhook handling
+
+## API
+
+- [AgentMailClient](src/main/kotlin/com/agentmail4k/sdk/AgentMailClient.kt): Main entry point; holds all API resources and provides scoped access via `inboxes()` and `pods()`
+- [AgentMailConfig](src/main/kotlin/com/agentmail4k/sdk/AgentMailConfig.kt): DSL builders for client configuration (API key, base URL, timeouts, retries)
+- [InboxResource](src/main/kotlin/com/agentmail4k/sdk/resource/InboxResource.kt): CRUD operations for inboxes
+- [MessageResource](src/main/kotlin/com/agentmail4k/sdk/resource/MessageResource.kt): Send, reply, reply-all, forward, and manage messages
+- [ThreadResource](src/main/kotlin/com/agentmail4k/sdk/resource/ThreadResource.kt): List, get, and delete email threads
+- [DraftResource](src/main/kotlin/com/agentmail4k/sdk/resource/DraftResource.kt): Compose, update, send, and manage drafts
+- [DomainResource](src/main/kotlin/com/agentmail4k/sdk/resource/DomainResource.kt): Custom domain management and DNS verification
+- [PodResource](src/main/kotlin/com/agentmail4k/sdk/resource/PodResource.kt): Pod (workspace) management
+- [WebhookResource](src/main/kotlin/com/agentmail4k/sdk/resource/WebhookResource.kt): Webhook subscription management
+- [ListResource](src/main/kotlin/com/agentmail4k/sdk/resource/ListResource.kt): Allow/block list entry management
+- [MetricsResource](src/main/kotlin/com/agentmail4k/sdk/resource/MetricsResource.kt): Email event metrics queries
+- [InboxScope](src/main/kotlin/com/agentmail4k/sdk/resource/InboxScope.kt): Scoped access to resources nested under an inbox
+- [PodScope](src/main/kotlin/com/agentmail4k/sdk/resource/PodScope.kt): Scoped access to resources nested under a pod
+- [WebhookHandler](src/main/kotlin/com/agentmail4k/dsl/WebhookHandler.kt): Webhook payload verification and event dispatch
+- [Monitor](src/main/kotlin/com/agentmail4k/dsl/Monitor.kt): Inbox polling with message handlers
+- [AutoReply](src/main/kotlin/com/agentmail4k/dsl/AutoReply.kt): Rule-based automatic reply system
+- [Bulk](src/main/kotlin/com/agentmail4k/dsl/Bulk.kt): Batch send and thread iteration operations
+
+## Optional
+
+- [License](LICENSE.md)

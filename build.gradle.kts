@@ -58,13 +58,13 @@ publishing {
         create<MavenPublication>("maven") {
             from(components["java"])
             groupId = "com.agentmail4k"
-            artifactId = "agentmail-sdk"
+            artifactId = "agentmail4k"
             version = project.version.toString()
 
             pom {
-                name.set("AgentMail SDK")
-                description.set("Kotlin SDK for the AgentMail API")
-                url.set("https://github.com/agentmail-to/agentmail-kotlin")
+                name.set("agentmail4k")
+                description.set("Kotlin DSL for the AgentMail API")
+                url.set("https://github.com/mattbobambrose/agentmail4k")
                 licenses {
                     license {
                         name.set("MIT")
@@ -73,13 +73,13 @@ publishing {
                 }
                 developers {
                     developer {
-                        id.set("agentmail")
-                        name.set("AgentMail")
-                        email.set("support@agentmail.to")
+                        id.set("mattbobambrose")
+                        name.set("Matthew Ambrose")
+                        email.set("mattbobambrose@gmail.com")
                     }
                 }
                 scm {
-                    url.set("https://github.com/agentmail-to/agentmail-kotlin")
+                    url.set("https://github.com/mattbobambrose/agentmail4k")
                 }
             }
         }
