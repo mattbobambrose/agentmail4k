@@ -2,14 +2,14 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.createDomain
-import com.mattbobambrose.agentmail4k.dsl.deleteDomain
-import com.mattbobambrose.agentmail4k.dsl.getDomain
-import com.mattbobambrose.agentmail4k.dsl.getDomainZoneFile
-import com.mattbobambrose.agentmail4k.dsl.listDomains
-import com.mattbobambrose.agentmail4k.dsl.updateDomain
-import com.mattbobambrose.agentmail4k.dsl.verifyDomain
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.dsl.createDomain
+import com.agentmail4k.dsl.deleteDomain
+import com.agentmail4k.dsl.getDomain
+import com.agentmail4k.dsl.getDomainZoneFile
+import com.agentmail4k.dsl.listDomains
+import com.agentmail4k.dsl.updateDomain
+import com.agentmail4k.dsl.verifyDomain
+import com.agentmail4k.sdk.AgentMailClient
 
 // --8<-- [start:create-domain]
 suspend fun createDomainExample() {

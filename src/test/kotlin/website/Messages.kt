@@ -2,16 +2,16 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.forwardMessage
-import com.mattbobambrose.agentmail4k.dsl.getAttachment
-import com.mattbobambrose.agentmail4k.dsl.getRawMessage
-import com.mattbobambrose.agentmail4k.dsl.listMessages
-import com.mattbobambrose.agentmail4k.dsl.replyAllToMessage
-import com.mattbobambrose.agentmail4k.dsl.replyToMessage
-import com.mattbobambrose.agentmail4k.dsl.sendMessage
-import com.mattbobambrose.agentmail4k.dsl.toFullMessage
-import com.mattbobambrose.agentmail4k.dsl.updateMessage
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.dsl.forwardMessage
+import com.agentmail4k.dsl.getAttachment
+import com.agentmail4k.dsl.getRawMessage
+import com.agentmail4k.dsl.listMessages
+import com.agentmail4k.dsl.replyAllToMessage
+import com.agentmail4k.dsl.replyToMessage
+import com.agentmail4k.dsl.sendMessage
+import com.agentmail4k.dsl.toFullMessage
+import com.agentmail4k.dsl.updateMessage
+import com.agentmail4k.sdk.AgentMailClient
 
 // --8<-- [start:send-message]
 suspend fun sendMessageExample() {

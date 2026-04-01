@@ -2,12 +2,12 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.createInbox
-import com.mattbobambrose.agentmail4k.dsl.deleteInbox
-import com.mattbobambrose.agentmail4k.dsl.getInbox
-import com.mattbobambrose.agentmail4k.dsl.listInboxes
-import com.mattbobambrose.agentmail4k.dsl.updateInbox
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.dsl.createInbox
+import com.agentmail4k.dsl.deleteInbox
+import com.agentmail4k.dsl.getInbox
+import com.agentmail4k.dsl.listInboxes
+import com.agentmail4k.dsl.updateInbox
+import com.agentmail4k.sdk.AgentMailClient
 
 // --8<-- [start:create-inbox]
 suspend fun createInboxExample() {

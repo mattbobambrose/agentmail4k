@@ -12,7 +12,7 @@ application {
     mainClass.set("MainKt")
 }
 
-group = "com.mattbobambrose.agentmail4k"
+group = "com.agentmail4k"
 version = "0.1.0"
 
 repositories {
@@ -45,11 +45,19 @@ kotlin {
     }
 }
 
+dokka {
+    moduleName.set("agentmail4k")
+    pluginsConfiguration.html {
+        homepageLink.set("https://github.com/mattbobambrose/agentmail4k")
+        footerMessage.set("agentmail4k")
+    }
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
-            groupId = "com.mattbobambrose.agentmail4k"
+            groupId = "com.agentmail4k"
             artifactId = "agentmail-sdk"
             version = project.version.toString()
 

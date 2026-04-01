@@ -2,11 +2,11 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.createPod
-import com.mattbobambrose.agentmail4k.dsl.deletePod
-import com.mattbobambrose.agentmail4k.dsl.getPod
-import com.mattbobambrose.agentmail4k.dsl.listPods
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.dsl.createPod
+import com.agentmail4k.dsl.deletePod
+import com.agentmail4k.dsl.getPod
+import com.agentmail4k.dsl.listPods
+import com.agentmail4k.sdk.AgentMailClient
 
 // --8<-- [start:create-pod]
 suspend fun createPodExample() {

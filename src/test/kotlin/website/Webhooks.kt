@@ -2,14 +2,14 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.createWebhook
-import com.mattbobambrose.agentmail4k.dsl.deleteWebhook
-import com.mattbobambrose.agentmail4k.dsl.getWebhook
-import com.mattbobambrose.agentmail4k.dsl.listWebhooks
-import com.mattbobambrose.agentmail4k.dsl.updateWebhook
-import com.mattbobambrose.agentmail4k.dsl.webhookHandler
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
-import com.mattbobambrose.agentmail4k.sdk.model.WebhookEvent
+import com.agentmail4k.dsl.createWebhook
+import com.agentmail4k.dsl.deleteWebhook
+import com.agentmail4k.dsl.getWebhook
+import com.agentmail4k.dsl.listWebhooks
+import com.agentmail4k.dsl.updateWebhook
+import com.agentmail4k.dsl.webhookHandler
+import com.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.sdk.model.WebhookEvent
 
 // --8<-- [start:create-webhook]
 suspend fun createWebhookExample() {

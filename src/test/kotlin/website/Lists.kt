@@ -2,13 +2,13 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.createListEntry
-import com.mattbobambrose.agentmail4k.dsl.deleteListEntry
-import com.mattbobambrose.agentmail4k.dsl.getListEntry
-import com.mattbobambrose.agentmail4k.dsl.listEntries
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
-import com.mattbobambrose.agentmail4k.sdk.model.ListDirection
-import com.mattbobambrose.agentmail4k.sdk.model.ListType
+import com.agentmail4k.dsl.createListEntry
+import com.agentmail4k.dsl.deleteListEntry
+import com.agentmail4k.dsl.getListEntry
+import com.agentmail4k.dsl.listEntries
+import com.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.sdk.model.ListDirection
+import com.agentmail4k.sdk.model.ListType
 
 // --8<-- [start:block-sender]
 suspend fun blockSenderExample() {

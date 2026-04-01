@@ -16,7 +16,7 @@ An idiomatic Kotlin SDK for the [AgentMail](https://agentmail.to) API, built on 
 
 ```kotlin
 dependencies {
-    implementation("com.mattbobambrose.agentmail4k:agentmail-sdk:0.1.0")
+    implementation("com.agentmail4k:agentmail-sdk:0.1.0")
 }
 ```
 
@@ -24,7 +24,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'com.mattbobambrose.agentmail4k:agentmail-sdk:0.1.0'
+    implementation 'com.agentmail4k:agentmail-sdk:0.1.0'
 }
 ```
 

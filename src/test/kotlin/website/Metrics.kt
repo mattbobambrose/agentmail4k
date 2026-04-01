@@ -2,10 +2,10 @@
 
 package website
 
-import com.mattbobambrose.agentmail4k.dsl.getOrganization
-import com.mattbobambrose.agentmail4k.dsl.queryMetrics
-import com.mattbobambrose.agentmail4k.sdk.AgentMailClient
-import com.mattbobambrose.agentmail4k.sdk.model.MetricsPeriod
+import com.agentmail4k.dsl.getOrganization
+import com.agentmail4k.dsl.queryMetrics
+import com.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.sdk.model.MetricsPeriod
 
 // --8<-- [start:query-metrics]
 suspend fun queryMetricsExample() {
