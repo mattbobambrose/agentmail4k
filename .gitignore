@@ -49,5 +49,10 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-### MkDocs ###
-website/site/
+### Python ###
+.venv/
+__pycache__/
+
+### Zensical build output ###
+website/**/site/
+website/**/.cache/

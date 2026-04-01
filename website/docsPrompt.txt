@@ -1,0 +1,7 @@
+I want to add documentation in the website/agentmail folder. I want to use Zensical for my static website. I do not want to
+embed example code directly into the docs. Instead, I want to have the example code snippets live in the
+src/test/kotlin/website folder and import them into the docs using the [project.markdown_extensions.pymdownx.snippets] and
+[project.markdown_extensions.pymdownx.superfences] directives in zensical.toml. I want to have lots of code examples.
+Code examples should not have tests, despite being in the test folder. We are only using the test folder to keep the
+code examples separate from the main source code. I want documentation for the dsl package, but include documentation for
+anything in the sdk that the user is likely to use.
