@@ -15,10 +15,12 @@ import com.mattbobambrose.agentmail4k.sdk.builder.UpdateInboxBuilder
 import com.mattbobambrose.agentmail4k.sdk.model.Inbox
 import com.mattbobambrose.agentmail4k.sdk.model.InboxList
 
+/** Provides operations for managing inboxes: list, create, get, update, and delete. */
 class InboxResource internal constructor(
   private val client: HttpClient,
   private val basePath: String,
 ) {
+  /** Lists inboxes with optional pagination. */
   suspend fun list(block: ListInboxesBuilder.() -> Unit = {}): InboxList {
     val params = ListInboxesBuilder().apply(block).toQueryParams()
     return client.get(basePath) {
@@ -26,6 +28,7 @@ class InboxResource internal constructor(
     }.body()
   }
 
+  /** Creates a new inbox. */
   suspend fun create(block: CreateInboxBuilder.() -> Unit = {}): Inbox {
     val body = CreateInboxBuilder().apply(block).build()
     return client.post(basePath) {
@@ -33,11 +36,13 @@ class InboxResource internal constructor(
     }.body()
   }
 
+  /** Retrieves an inbox by ID. */
   suspend fun get(inboxId: String): Inbox {
     require(inboxId.isNotEmpty()) { "Inbox ID must not be empty." }
     return client.get("$basePath/${inboxId.encodeURLPathPart()}").body()
   }
 
+  /** Updates an inbox by ID. */
   suspend fun update(inboxId: String, block: UpdateInboxBuilder.() -> Unit): Inbox {
     require(inboxId.isNotEmpty()) { "Inbox ID must not be empty." }
     val body = UpdateInboxBuilder().apply(block).build()
@@ -46,6 +51,7 @@ class InboxResource internal constructor(
     }.body()
   }
 
+  /** Deletes an inbox by ID. */
   suspend fun delete(inboxId: String) {
     require(inboxId.isNotEmpty()) { "Inbox ID must not be empty." }
     client.delete("$basePath/${inboxId.encodeURLPathPart()}")

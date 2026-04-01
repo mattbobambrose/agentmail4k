@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.pambrose.stable.versions)
     alias(libs.plugins.pambrose.testing)
+    alias(libs.plugins.dokka)
     `maven-publish`
     application
 }

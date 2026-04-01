@@ -2,6 +2,7 @@ package com.mattbobambrose.agentmail4k.sdk.builder
 
 import com.mattbobambrose.agentmail4k.sdk.AgentMailDsl
 
+/** DSL builder for configuring thread list pagination, filtering, and inclusion of spam/blocked/trash. */
 @AgentMailDsl
 class ListThreadsBuilder {
   var limit: Int? = null
@@ -27,6 +28,7 @@ class ListThreadsBuilder {
   }
 }
 
+/** DSL builder for configuring thread deletion options. */
 @AgentMailDsl
 class DeleteThreadBuilder {
   var permanent: Boolean? = null

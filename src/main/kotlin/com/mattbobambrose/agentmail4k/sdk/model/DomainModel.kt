@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** Represents a custom email domain with its verification status and timestamps. */
 @Serializable
 data class Domain(
   @SerialName("domain_id") val domainId: String,
@@ -13,6 +14,7 @@ data class Domain(
   @SerialName("created_at") val createdAt: Instant,
 )
 
+/** Paginated list of domains. */
 @Serializable
 data class DomainList(
   val count: Int,

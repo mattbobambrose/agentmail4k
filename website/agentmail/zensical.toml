@@ -59,6 +59,7 @@ nav = [
   { "Metrics & Organization" = "metrics.md" },
   { "Scoped Access" = "scoped-access.md" },
   { "Workflows" = "workflows.md" },
+  { "API Reference (KDoc)" = "kdoc/index.html" },
 ]
 
 # With the "extra_css" option you can add your own CSS styling to customize

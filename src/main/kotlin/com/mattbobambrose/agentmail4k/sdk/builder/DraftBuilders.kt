@@ -3,6 +3,7 @@ package com.mattbobambrose.agentmail4k.sdk.builder
 import kotlinx.serialization.Serializable
 import com.mattbobambrose.agentmail4k.sdk.AgentMailDsl
 
+/** DSL builder for creating an email draft with recipients, subject, and body content. */
 @AgentMailDsl
 class CreateDraftBuilder {
   var to: List<String> = emptyList()
@@ -22,6 +23,7 @@ class CreateDraftBuilder {
   )
 }
 
+/** DSL builder for updating an existing email draft. */
 @AgentMailDsl
 class UpdateDraftBuilder {
   var to: List<String>? = null
@@ -41,6 +43,7 @@ class UpdateDraftBuilder {
   )
 }
 
+/** DSL builder for configuring draft list pagination and filtering. */
 @AgentMailDsl
 class ListDraftsBuilder {
   var limit: Int? = null
@@ -60,6 +63,7 @@ class ListDraftsBuilder {
   }
 }
 
+/** DSL builder for configuring options when sending a draft. */
 @AgentMailDsl
 class SendDraftBuilder {
   var labels: List<String>? = null

@@ -14,6 +14,7 @@ import com.mattbobambrose.agentmail4k.sdk.model.Message
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
+/** DSL builder for configuring inbox monitoring with message handlers, error handlers, and polling settings. */
 @AgentMailDsl
 class MonitorBuilder {
   private var onMessage: (suspend (Message) -> Unit)? = null
@@ -23,16 +24,19 @@ class MonitorBuilder {
   var includeSpam: Boolean = false
   var includeBlocked: Boolean = false
 
+  /** Sets the handler invoked for each new message (preview content only). */
   fun onMessage(handler: suspend (Message) -> Unit) {
     fullMessage = false
     onMessage = handler
   }
 
+  /** Sets the handler invoked for each new message (fetches full content). */
   fun onFullMessage(handler: suspend (Message) -> Unit) {
     fullMessage = true
     onMessage = handler
   }
 
+  /** Sets the handler invoked when a polling error occurs. */
   fun onError(handler: suspend (Throwable) -> Unit) {
     onError = handler
   }
@@ -47,6 +51,7 @@ class MonitorBuilder {
   )
 }
 
+/** Immutable configuration for inbox monitoring. */
 internal data class MonitorConfig(
   val onMessage: (suspend (Message) -> Unit)?,
   val onError: (suspend (Throwable) -> Unit)?,
@@ -56,6 +61,7 @@ internal data class MonitorConfig(
   val includeBlocked: Boolean,
 )
 
+/** Starts a coroutine that polls an inbox for new messages and invokes handlers. */
 fun AgentMailClient.monitor(
   inboxId: String,
   scope: CoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob()),

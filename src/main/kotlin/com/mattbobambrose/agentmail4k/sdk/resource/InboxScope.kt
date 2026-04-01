@@ -3,6 +3,7 @@ package com.mattbobambrose.agentmail4k.sdk.resource
 import io.ktor.client.HttpClient
 import com.mattbobambrose.agentmail4k.sdk.internal.ApiPaths
 
+/** Scoped access to resources nested under a specific inbox, including messages, threads, drafts, lists, metrics, and API keys. */
 class InboxScope internal constructor(
   private val client: HttpClient,
   private val inboxId: String,

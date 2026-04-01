@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** Represents an email inbox with its address, display name, and optional pod/client association. */
 @Serializable
 data class Inbox(
   @SerialName("pod_id") val podId: String? = null,
@@ -15,6 +16,7 @@ data class Inbox(
   @SerialName("created_at") val createdAt: Instant,
 )
 
+/** Paginated list of inboxes. */
 @Serializable
 data class InboxList(
   val count: Int,

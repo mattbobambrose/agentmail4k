@@ -3,6 +3,7 @@ package com.mattbobambrose.agentmail4k.sdk
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
+/** DSL builder for configuring an [AgentMailClient] instance. Allows setting the API key, base URL, timeout, and retry settings. */
 @AgentMailDsl
 class AgentMailConfigBuilder {
   var apiKey: String? = null
@@ -10,10 +11,12 @@ class AgentMailConfigBuilder {
   private var timeoutBuilder = TimeoutBuilder()
   private var retryBuilder = RetryBuilder()
 
+  /** Configures HTTP timeout settings. */
   fun timeout(block: TimeoutBuilder.() -> Unit) {
     timeoutBuilder.apply(block)
   }
 
+  /** Configures HTTP retry settings. */
   fun retry(block: RetryBuilder.() -> Unit) {
     retryBuilder.apply(block)
   }
@@ -27,6 +30,7 @@ class AgentMailConfigBuilder {
   )
 }
 
+/** Immutable configuration for the AgentMail HTTP client. */
 data class AgentMailConfig(
   val apiKey: String,
   val baseUrl: String,
@@ -34,6 +38,7 @@ data class AgentMailConfig(
   val retry: RetryConfig,
 )
 
+/** DSL builder for configuring HTTP timeout durations. */
 @AgentMailDsl
 class TimeoutBuilder {
   var connect: Duration = 10.seconds
@@ -43,12 +48,14 @@ class TimeoutBuilder {
   internal fun build() = TimeoutConfig(connect, request, socket)
 }
 
+/** Immutable timeout configuration with connect, request, and socket durations. */
 data class TimeoutConfig(
   val connect: Duration,
   val request: Duration,
   val socket: Duration,
 )
 
+/** DSL builder for configuring HTTP retry behavior. */
 @AgentMailDsl
 class RetryBuilder {
   var maxRetries: Int = 3
@@ -57,6 +64,7 @@ class RetryBuilder {
   internal fun build() = RetryConfig(maxRetries, retryOnServerErrors)
 }
 
+/** Immutable retry configuration with max retries and server error retry toggle. */
 data class RetryConfig(
   val maxRetries: Int,
   val retryOnServerErrors: Boolean,

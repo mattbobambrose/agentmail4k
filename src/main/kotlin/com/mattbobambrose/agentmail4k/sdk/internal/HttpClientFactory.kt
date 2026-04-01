@@ -15,8 +15,13 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import com.mattbobambrose.agentmail4k.sdk.AgentMailConfig
 
+/**
+ * Factory for creating a configured Ktor [HttpClient] with JSON content negotiation,
+ * bearer auth, timeouts, retry, and base URL defaults.
+ */
 internal object HttpClientFactory {
 
+  /** Creates a configured Ktor [HttpClient] from the given [AgentMailConfig]. */
   fun create(config: AgentMailConfig): HttpClient = HttpClient(CIO) {
     install(ContentNegotiation) {
       json(Json {

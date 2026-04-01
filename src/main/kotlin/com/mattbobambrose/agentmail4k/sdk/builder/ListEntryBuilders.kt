@@ -3,6 +3,7 @@ package com.mattbobambrose.agentmail4k.sdk.builder
 import kotlinx.serialization.Serializable
 import com.mattbobambrose.agentmail4k.sdk.AgentMailDsl
 
+/** DSL builder for creating a new allow/block list entry. Requires an entry value. */
 @AgentMailDsl
 class CreateListEntryBuilder {
   var entry: String? = null
@@ -13,6 +14,7 @@ class CreateListEntryBuilder {
   }
 }
 
+/** DSL builder for configuring list entry pagination. */
 @AgentMailDsl
 class ListEntriesBuilder {
   var limit: Int? = null

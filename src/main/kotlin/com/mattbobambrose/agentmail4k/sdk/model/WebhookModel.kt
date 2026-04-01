@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** Represents a webhook subscription with its target URL and subscribed events. */
 @Serializable
 data class Webhook(
   @SerialName("webhook_id") val webhookId: String,
@@ -13,6 +14,7 @@ data class Webhook(
   @SerialName("created_at") val createdAt: Instant,
 )
 
+/** Paginated list of webhooks. */
 @Serializable
 data class WebhookList(
   val count: Int,
@@ -21,6 +23,7 @@ data class WebhookList(
   val webhooks: List<Webhook>,
 )
 
+/** Supported webhook event types for message and domain lifecycle events. */
 enum class WebhookEvent(val value: String) {
   MESSAGE_RECEIVED("message.received"),
   MESSAGE_SENT("message.sent"),
