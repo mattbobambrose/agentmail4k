@@ -8,6 +8,7 @@ build/
 .claude/*.lock
 .jbeval
 secrets
+scratch/
 logback.xml
 Main.kt
 
