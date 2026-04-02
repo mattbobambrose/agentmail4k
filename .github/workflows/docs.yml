@@ -32,6 +32,7 @@ jobs:
         working-directory: website/agentmail
       - run: ./gradlew dokkaGenerate
       - run: cp -r build/dokka/html website/agentmail/site/kdoc
+      - run: cp llms.txt llms-full.txt website/agentmail/site/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: website/agentmail/site

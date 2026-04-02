@@ -64,6 +64,7 @@ nav = [
   { "Metrics & Organization" = "metrics.md" },
   { "Scoped Access" = "scoped-access.md" },
   { "Workflows" = "workflows.md" },
+  { "Copy for Cursor / Claude" = "llm-cheatsheet.md" },
   { "API Reference (KDoc)" = "kdoc/index.html" },
 ]
 
