@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.pambrose.stable.versions)
     alias(libs.plugins.pambrose.testing)
     alias(libs.plugins.dokka)
-    `maven-publish`
+    alias(libs.plugins.maven.publish)
     application
 }
 
@@ -53,35 +53,33 @@ dokka {
     }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-            groupId = "com.agentmail4k"
-            artifactId = "agentmail4k"
-            version = project.version.toString()
+mavenPublishing {
+    coordinates("com.agentmail4k", "agentmail4k", version.toString())
 
-            pom {
-                name.set("agentmail4k")
-                description.set("Kotlin DSL for the AgentMail API")
-                url.set("https://github.com/mattbobambrose/agentmail4k")
-                licenses {
-                    license {
-                        name.set("MIT")
-                        url.set("https://opensource.org/licenses/MIT")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("mattbobambrose")
-                        name.set("Matthew Ambrose")
-                        email.set("mattbobambrose@gmail.com")
-                    }
-                }
-                scm {
-                    url.set("https://github.com/mattbobambrose/agentmail4k")
-                }
+    pom {
+        name.set("agentmail4k")
+        description.set("Kotlin DSL for the AgentMail API")
+        url.set("https://github.com/mattbobambrose/agentmail4k")
+        licenses {
+            license {
+                name.set("MIT")
+                url.set("https://opensource.org/licenses/MIT")
             }
         }
+        developers {
+            developer {
+                id.set("mattbobambrose")
+                name.set("Matthew Ambrose")
+                email.set("matthew@agentmail4k.com")
+            }
+        }
+        scm {
+            connection.set("scm:git:git://github.com/mattbobambrose/agentmail4k.git")
+            developerConnection.set("scm:git:ssh://github.com/mattbobambrose/agentmail4k.git")
+            url.set("https://github.com/mattbobambrose/agentmail4k")
+        }
     }
+
+    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
 }
