@@ -93,7 +93,7 @@ class DslTest : StringSpec() {
         """
               {
                   "cc": ["pambrose@mac.com"],
-                  "bcc": ["mattbobambrose@gmail.com"],
+                  "bcc": ["matthew@agentmail4k.com"],
                   "inbox_id": "inbox_fm",
                   "thread_id": "thread_fm",
                   "message_id": "msg_fm",
