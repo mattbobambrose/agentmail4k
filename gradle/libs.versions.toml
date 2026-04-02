@@ -7,6 +7,7 @@ kotlinx-coroutines = "1.10.2"
 kotest = "6.1.9"
 mockk = "1.14.2"
 dokka = "2.2.0"
+maven-publish = "0.30.0"
 gradle-plugins = "1.0.10"
 
 [libraries]
@@ -28,5 +29,6 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
 pambrose-stable-versions = { id = "com.pambrose.stable-versions", version.ref = "gradle-plugins" }
 pambrose-testing = { id = "com.pambrose.testing", version.ref = "gradle-plugins" }
