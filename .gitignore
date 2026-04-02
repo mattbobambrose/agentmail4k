@@ -8,10 +8,6 @@ build/
 .claude/*.lock
 .jbeval
 secrets
-scratch/
-logback.xml
-Main.kt
-key.gpg
 
 ### IntelliJ IDEA ###
 .idea/

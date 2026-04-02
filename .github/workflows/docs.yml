@@ -29,12 +29,12 @@ jobs:
           cache-dependency-path: website/pyproject.toml
       - run: pip install zensical
       - run: zensical build --clean
-        working-directory: website/agentmail
+        working-directory: website/agentmail4k
       - run: ./gradlew dokkaGenerate
-      - run: cp -r build/dokka/html website/agentmail/site/kdoc
-      - run: cp llms.txt llms-full.txt website/agentmail/site/
+      - run: cp -r build/dokka/html website/agentmail4k/site/kdoc
+      - run: cp llms.txt llms-full.txt website/agentmail4k/site/
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: website/agentmail/site
+          path: website/agentmail4k/site
       - uses: actions/deploy-pages@v4
         id: deployment

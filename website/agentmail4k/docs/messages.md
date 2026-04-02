@@ -54,8 +54,18 @@ List operations return message summaries without body content. Use `toFullMessag
 
 ## Update Labels
 
+Replace all labels on a message:
+
 ```kotlin
 --8<-- "Messages.kt:update-message"
+```
+
+### Add / Remove Labels
+
+Incrementally add or remove labels without replacing the full set. This is useful for tracking read/unread state:
+
+```kotlin
+--8<-- "Messages.kt:add-remove-labels"
 ```
 
 ## Attachments
