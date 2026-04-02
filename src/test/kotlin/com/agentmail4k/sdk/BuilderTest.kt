@@ -17,6 +17,7 @@ import com.agentmail4k.sdk.builder.QueryMetricsBuilder
 import com.agentmail4k.sdk.builder.SendDraftBuilder
 import com.agentmail4k.sdk.builder.SendMessageBuilder
 import com.agentmail4k.sdk.builder.UpdateInboxBuilder
+import com.agentmail4k.sdk.builder.UpdateMessageBuilder
 import com.agentmail4k.sdk.builder.UpdateWebhookBuilder
 import com.agentmail4k.sdk.model.MetricsPeriod
 import com.agentmail4k.sdk.model.WebhookEvent
@@ -286,5 +287,77 @@ class BuilderTest : StringSpec({
     val builder = SendDraftBuilder()
     val request = builder.build()
     request.labels shouldBe null
+  }
+
+  // --- UpdateMessageBuilder ---
+
+  "UpdateMessageBuilder should set labels for full replacement" {
+    val builder = UpdateMessageBuilder().apply {
+      labels = listOf("read", "important")
+    }
+    val request = builder.build()
+    request.labels shouldBe listOf("read", "important")
+    request.addLabels shouldBe null
+    request.removeLabels shouldBe null
+  }
+
+  "UpdateMessageBuilder should add labels incrementally via varargs" {
+    val builder = UpdateMessageBuilder().apply {
+      addLabels("read", "important")
+    }
+    val request = builder.build()
+    request.labels shouldBe null
+    request.addLabels shouldBe listOf("read", "important")
+    request.removeLabels shouldBe null
+  }
+
+  "UpdateMessageBuilder should remove labels incrementally via varargs" {
+    val builder = UpdateMessageBuilder().apply {
+      removeLabels("unread", "new")
+    }
+    val request = builder.build()
+    request.labels shouldBe null
+    request.addLabels shouldBe null
+    request.removeLabels shouldBe listOf("unread", "new")
+  }
+
+  "UpdateMessageBuilder should support add and remove together" {
+    val builder = UpdateMessageBuilder().apply {
+      addLabels("read")
+      removeLabels("unread")
+    }
+    val request = builder.build()
+    request.labels shouldBe null
+    request.addLabels shouldBe listOf("read")
+    request.removeLabels shouldBe listOf("unread")
+  }
+
+  "UpdateMessageBuilder should support mixing labels with addLabels and removeLabels" {
+    val builder = UpdateMessageBuilder().apply {
+      labels = listOf("base")
+      addLabels("extra")
+      removeLabels("old")
+    }
+    val request = builder.build()
+    request.labels shouldBe listOf("base")
+    request.addLabels shouldBe listOf("extra")
+    request.removeLabels shouldBe listOf("old")
+  }
+
+  "UpdateMessageBuilder should accumulate multiple addLabels calls" {
+    val builder = UpdateMessageBuilder().apply {
+      addLabels("read")
+      addLabels("important")
+    }
+    val request = builder.build()
+    request.addLabels shouldBe listOf("read", "important")
+  }
+
+  "UpdateMessageBuilder should default all fields to null" {
+    val builder = UpdateMessageBuilder()
+    val request = builder.build()
+    request.labels shouldBe null
+    request.addLabels shouldBe null
+    request.removeLabels shouldBe null
   }
 })

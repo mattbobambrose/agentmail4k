@@ -1,5 +1,6 @@
 package com.agentmail4k.sdk.builder
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import com.agentmail4k.sdk.AgentMailDsl
 
@@ -116,12 +117,34 @@ class ListMessagesBuilder {
   }
 }
 
-/** DSL builder for updating message labels. */
+/** DSL builder for updating message labels. Supports replacing all labels or incrementally adding/removing. */
 @AgentMailDsl
 class UpdateMessageBuilder {
   var labels: List<String>? = null
+  private var _addLabels: MutableList<String>? = null
+  private var _removeLabels: MutableList<String>? = null
 
-  internal fun build() = UpdateMessageRequest(labels = labels)
+  @Deprecated("addLabels() requires at least one label.", level = DeprecationLevel.ERROR)
+  fun addLabels(): Nothing = throw UnsupportedOperationException()
+
+  /** Adds the given labels to the message's existing labels. */
+  fun addLabels(vararg labels: String) {
+    _addLabels = (_addLabels ?: mutableListOf()).apply { addAll(labels) }
+  }
+
+  @Deprecated("removeLabels() requires at least one label.", level = DeprecationLevel.ERROR)
+  fun removeLabels(): Nothing = throw UnsupportedOperationException()
+
+  /** Removes the given labels from the message's existing labels. */
+  fun removeLabels(vararg labels: String) {
+    _removeLabels = (_removeLabels ?: mutableListOf()).apply { addAll(labels) }
+  }
+
+  internal fun build() = UpdateMessageRequest(
+    labels = labels,
+    addLabels = _addLabels?.toList(),
+    removeLabels = _removeLabels?.toList(),
+  )
 }
 
 @Serializable
@@ -149,4 +172,6 @@ internal data class ReplyAllRequest(
 @Serializable
 internal data class UpdateMessageRequest(
   val labels: List<String>? = null,
+  @SerialName("add_labels") val addLabels: List<String>? = null,
+  @SerialName("remove_labels") val removeLabels: List<String>? = null,
 )

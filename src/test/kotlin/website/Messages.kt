@@ -137,12 +137,28 @@ suspend fun updateMessageExample() {
     val messages = client.listMessages("inbox-id")
     val message = messages.messages.first()
 
+    // Replace all labels
     client.updateMessage(message) {
         labels = listOf("important", "reviewed")
     }
     client.close()
 }
 // --8<-- [end:update-message]
+
+// --8<-- [start:add-remove-labels]
+suspend fun addRemoveLabelsExample() {
+    val client = AgentMailClient()
+    val messages = client.listMessages("inbox-id")
+    val message = messages.messages.first()
+
+    // Mark as read
+    client.updateMessage(message) {
+        addLabels("read")
+        removeLabels("unread")
+    }
+    client.close()
+}
+// --8<-- [end:add-remove-labels]
 
 // --8<-- [start:attachment]
 suspend fun attachmentExample() {

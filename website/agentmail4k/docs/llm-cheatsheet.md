@@ -6,7 +6,7 @@ Copy the block below into Cursor or Claude for complete agentmail4k API knowledg
 /*
 agentmail4k — Kotlin DSL for the AgentMail API.
 
-Setup: Add implementation("com.agentmail4k:agentmail4k:0.1.0") to build.gradle.kts.
+Setup: Add implementation("com.agentmail4k:agentmail4k:0.1.1") to build.gradle.kts.
        Set AGENTMAIL_API_KEY in environment or pass via DSL config.
 
 All API calls are suspend functions. Import DSL extensions from com.agentmail4k.dsl.
@@ -30,7 +30,8 @@ Messages:
   client.replyToMessage(message) { text = "..." }  → SendMessageResponse
   client.replyAllToMessage(message) { text = "..." }  → SendMessageResponse
   client.forwardMessage(message) { to = listOf("...") }  → SendMessageResponse
-  client.updateMessage(message) { labels = listOf("...") }  → Message
+  client.updateMessage(message) { labels = listOf("...") }  → Message (replaces all labels)
+  client.updateMessage(message) { addLabels("read"); removeLabels("unread") }  → Message (incremental)
   client.getAttachment(message, attachmentId)     → AttachmentData
   client.getRawMessage(message)                   → RawMessageResponse
 

@@ -27,8 +27,11 @@ run:
 
 kdocs:
 	./gradlew :dokkaGenerate
+
 site:
-	cd website/agentmail && uv run zensical serve
+	rm -rf website/agentmail4k/site
+	rm -rf website/agentmail4k/.cache
+	cd website/agentmail4k && uv run zensical serve
 
 tests:
 	./gradlew --rerun-tasks check
