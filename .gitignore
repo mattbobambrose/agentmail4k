@@ -11,6 +11,7 @@ secrets
 scratch/
 logback.xml
 Main.kt
+key.gpg
 
 ### IntelliJ IDEA ###
 .idea/
