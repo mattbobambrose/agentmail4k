@@ -13,7 +13,7 @@ application {
 }
 
 group = "com.agentmail4k"
-version = "0.1.2"
+version = findProperty("overrideVersion") as String? ?: "0.1.2"
 
 repositories {
     google()
@@ -80,5 +80,7 @@ mavenPublishing {
     }
 
     publishToMavenCentral()
-    signAllPublications()
+    if (!version.toString().endsWith("-SNAPSHOT")) {
+        signAllPublications()
+    }
 }
