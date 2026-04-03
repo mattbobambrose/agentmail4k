@@ -41,6 +41,12 @@ site: clean-docs
 publish-local:
 	./gradlew publishToMavenLocal
 
+publish-snapshot:
+	$(eval BASE_VERSION := $(shell grep '^version =' build.gradle.kts | sed 's/.*"\(.*\)"/\1/' | sed 's/-SNAPSHOT//'))
+	ORG_GRADLE_PROJECT_signingInMemoryKey="$$(gpg --armor --export-secret-keys E4467B8F)" \
+	ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=$$(security find-generic-password -a "gpg-signing" -s "gradle-signing-password" -w) \
+	./gradlew -Pversion=$(BASE_VERSION)-SNAPSHOT publishToMavenCentral
+
 publish-maven-central:
 	ORG_GRADLE_PROJECT_signingInMemoryKey="$$(gpg --armor --export-secret-keys E4467B8F)" \
 	ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=$$(security find-generic-password -a "gpg-signing" -s "gradle-signing-password" -w) \
