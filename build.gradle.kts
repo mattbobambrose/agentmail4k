@@ -28,7 +28,6 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.auth)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(libs.kotest.runner.junit5)
@@ -80,6 +79,6 @@ mavenPublishing {
         }
     }
 
-    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
+    publishToMavenCentral()
     signAllPublications()
 }
