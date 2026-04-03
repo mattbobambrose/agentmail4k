@@ -45,3 +45,9 @@ Create a draft, review it, then send:
 ```kotlin
 --8<-- "Drafts.kt:draft-attachment"
 ```
+
+## Next Steps
+
+- [Monitoring](monitoring.md) — poll for new messages in real time
+- [Auto-Reply](auto-reply.md) — set up rule-based automatic replies
+- [Bulk Operations](bulk-operations.md) — send to multiple inboxes at once

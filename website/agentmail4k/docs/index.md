@@ -37,5 +37,5 @@ dependencies {
 ## Next Steps
 
 - [Getting Started](getting-started.md) — set up your API key and send your first message
-- [Configuration](configuration.md) — customize timeouts, retries, and base URL
-- [Workflows](workflows.md) — polling, auto-reply, and bulk operations
+- [Configuration](configuration.md) — customize timeouts, retries, and more
+- [Inboxes](inboxes.md) — create and manage inboxes

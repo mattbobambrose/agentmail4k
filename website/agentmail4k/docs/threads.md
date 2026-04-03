@@ -25,3 +25,9 @@ Threads group related messages into conversations within an inbox.
 ```kotlin
 --8<-- "Threads.kt:thread-attachment"
 ```
+
+## Next Steps
+
+- [Drafts](drafts.md) — create, update, and send drafts
+- [Monitoring](monitoring.md) — poll for new messages in real time
+- [Auto-Reply](auto-reply.md) — set up rule-based automatic replies

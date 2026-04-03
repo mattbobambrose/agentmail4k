@@ -50,24 +50,34 @@ site_url = "https://agentmail4k.com/"
 #
 # Read more: https://zensical.org/docs/setup/navigation/
 nav = [
-  { "Home" = "index.md" },
-  { "Getting Started" = "getting-started.md" },
-  { "Configuration" = "configuration.md" },
-  { "Inboxes" = "inboxes.md" },
-  { "Messages" = "messages.md" },
-  { "Monitoring" = "monitoring.md" },
-  { "Threads" = "threads.md" },
-  { "Auto-Reply" = "auto-reply.md" },
-  { "Bulk Operations" = "bulk-operations.md" },
-  { "Drafts" = "drafts.md" },
-  { "Webhooks" = "webhooks.md" },
-  { "Scoped Access" = "scoped-access.md" },
-  { "Pods" = "pods.md" },
-  { "Domains" = "domains.md" },
-  { "Lists" = "lists.md" },
-  { "Metrics & Organization" = "metrics.md" },
-  { "Copy for Cursor / Claude" = "llm-cheatsheet.md" },
-  { "API Reference (KDoc)" = "kdoc/index.html" },
+  { "Overview" = "index.md" },
+  { "Introduction" = [
+    { "Getting Started" = "getting-started.md" },
+    { "Configuration" = "configuration.md" },
+  ]},
+  { "Core" = [
+    { "Inboxes" = "inboxes.md" },
+    { "Messages" = "messages.md" },
+    { "Threads" = "threads.md" },
+    { "Drafts" = "drafts.md" },
+  ]},
+  { "Automation" = [
+    { "Monitoring" = "monitoring.md" },
+    { "Auto-Reply" = "auto-reply.md" },
+    { "Bulk Operations" = "bulk-operations.md" },
+    { "Webhooks" = "webhooks.md" },
+  ]},
+  { "Organization" = [
+    { "Pods" = "pods.md" },
+    { "Domains" = "domains.md" },
+    { "Lists" = "lists.md" },
+    { "Scoped Access" = "scoped-access.md" },
+    { "Metrics & Organization" = "metrics.md" },
+  ]},
+  { "Reference" = [
+    { "Copy for Cursor / Claude" = "llm-cheatsheet.md" },
+    { "API Reference (KDoc)" = "kdoc/index.html" },
+  ]},
 ]
 
 # With the "extra_css" option you can add your own CSS styling to customize
@@ -231,7 +241,7 @@ features = [
     # When sections are enabled, top-level sections are rendered as groups in
     # the sidebar for viewports above 1220px, but remain as-is on mobile.
     # https://zensical.org/docs/setup/navigation/#navigation-sections
-    "navigation.sections",
+    #"navigation.sections",
 
     # When tabs are enabled, top-level sections are rendered in a menu layer
     # below the header for viewports above 1220px, but remain as-is on mobile.

@@ -71,3 +71,9 @@ You can also verify signatures without dispatching:
 ```kotlin
 --8<-- "Webhooks.kt:webhook-verify"
 ```
+
+## Next Steps
+
+- [Pods](pods.md) — group inboxes into isolated pods
+- [Domains](domains.md) — register and manage custom domains
+- [Lists](lists.md) — manage mailing lists and subscribers

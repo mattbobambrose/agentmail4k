@@ -41,3 +41,8 @@ Both approaches access the same API. Choose based on your use case:
 **Use DSL functions** when performing a single operation — they're concise and read naturally.
 
 **Use scoped access** when performing multiple operations on the same inbox or pod — you avoid passing the ID repeatedly and make the grouping explicit.
+
+## Next Steps
+
+- [Metrics & Organization](metrics.md) — view usage metrics and organization details
+- [Copy for Cursor / Claude](llm-cheatsheet.md) — LLM-friendly cheat sheet for AI assistants

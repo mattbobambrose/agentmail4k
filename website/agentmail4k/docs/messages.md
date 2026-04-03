@@ -81,3 +81,9 @@ Get the raw RFC 822 formatted email:
 ```kotlin
 --8<-- "Messages.kt:raw-message"
 ```
+
+## Next Steps
+
+- [Threads](threads.md) — list and manage conversation threads
+- [Drafts](drafts.md) — create, update, and send drafts
+- [Monitoring](monitoring.md) — poll for new messages in real time
