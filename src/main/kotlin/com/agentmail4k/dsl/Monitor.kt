@@ -1,5 +1,8 @@
 package com.agentmail4k.dsl
 
+import com.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.sdk.AgentMailDsl
+import com.agentmail4k.sdk.model.Message
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -8,9 +11,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import com.agentmail4k.sdk.AgentMailClient
-import com.agentmail4k.sdk.AgentMailDsl
-import com.agentmail4k.sdk.model.Message
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -19,10 +19,16 @@ import kotlin.time.Duration.Companion.seconds
 class MonitorBuilder {
   private var onMessage: (suspend (Message) -> Unit)? = null
   private var onError: (suspend (Throwable) -> Unit)? = null
+  private var filter: ((Message) -> Boolean)? = null
   private var fullMessage: Boolean = false
   var pollInterval: Duration = 5.seconds
   var includeSpam: Boolean = false
   var includeBlocked: Boolean = false
+
+  /** Sets a predicate that filters which messages are passed to the handler. */
+  fun filterBy(predicate: (Message) -> Boolean) {
+    filter = predicate
+  }
 
   /** Sets the handler invoked for each new message (preview content only). */
   fun onMessage(handler: suspend (Message) -> Unit) {
@@ -41,20 +47,25 @@ class MonitorBuilder {
     onError = handler
   }
 
-  internal fun build() = MonitorConfig(
-    onMessage = onMessage,
-    onError = onError,
-    fullMessage = fullMessage,
-    pollInterval = pollInterval,
-    includeSpam = includeSpam,
-    includeBlocked = includeBlocked,
-  )
+  internal fun build(): MonitorConfig {
+    requireNotNull(onMessage) { "onMessage or onFullMessage must be set." }
+    return MonitorConfig(
+      onMessage = onMessage!!,
+      onError = onError,
+      filter = filter,
+      fullMessage = fullMessage,
+      pollInterval = pollInterval,
+      includeSpam = includeSpam,
+      includeBlocked = includeBlocked,
+    )
+  }
 }
 
 /** Immutable configuration for inbox monitoring. */
 internal data class MonitorConfig(
-  val onMessage: (suspend (Message) -> Unit)?,
+  val onMessage: suspend (Message) -> Unit,
   val onError: (suspend (Throwable) -> Unit)?,
+  val filter: ((Message) -> Boolean)?,
   val fullMessage: Boolean,
   val pollInterval: Duration,
   val includeSpam: Boolean,
@@ -87,8 +98,9 @@ fun AgentMailClient.monitor(
         if (messages.messages.isNotEmpty()) {
           lastTimestamp = messages.messages.first().timestamp.toString()
           for (message in messages.messages.asReversed()) {
+            if (config.filter != null && !config.filter.invoke(message)) continue
             val msg = if (config.fullMessage) client.toFullMessage(message) else message
-            config.onMessage?.invoke(msg)
+            config.onMessage.invoke(msg)
           }
         }
       } catch (e: CancellationException) {

@@ -13,11 +13,13 @@ import kotlin.time.Duration.Companion.seconds
 fun AgentMailClient.poll(
   inboxId: String,
   interval: Duration = 10.seconds,
+  filter: ((Message) -> Boolean)? = null,
   scope: CoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
   handler: suspend (Message) -> Unit,
 ): Job {
   return monitor(inboxId, scope) {
     pollInterval = interval
+    filter?.let { filterBy(it) }
     onMessage(handler = handler)
   }
 }

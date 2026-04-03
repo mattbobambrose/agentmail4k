@@ -6,6 +6,9 @@ clean:
 build: clean
 	./gradlew build
 
+tests:
+	./gradlew --rerun-tasks check
+
 versioncheck:
 	./gradlew dependencyUpdates
 
@@ -26,17 +29,19 @@ run:
 	./gradlew run
 
 kdocs:
-	./gradlew :dokkaGenerate
+	./gradlew dokkaGeneratePublicationHtml
 
-site:
+clean-docs:
 	rm -rf website/agentmail4k/site
 	rm -rf website/agentmail4k/.cache
+
+site: clean-docs
 	cd website/agentmail4k && uv run zensical serve
 
-tests:
-	./gradlew --rerun-tasks check
+publish-local:
+	./gradlew publishToMavenLocal
 
-maven-central:
+publish-maven-central:
 	./gradlew publishAndReleaseToMavenCentral
 
 upgrade-wrapper:

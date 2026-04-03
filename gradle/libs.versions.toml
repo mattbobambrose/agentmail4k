@@ -1,14 +1,14 @@
 [versions]
 kotlin = "2.3.20"
-ktor = "3.4.1"
+ktor = "3.4.2"
 kotlinx-serialization = "1.10.0"
-kotlinx-datetime = "0.6.2"
+kotlinx-datetime = "0.7.1-0.6.x-compat"
 kotlinx-coroutines = "1.10.2"
-kotest = "6.1.9"
-mockk = "1.14.2"
+kotest = "6.1.10"
+mockk = "1.14.9"
 dokka = "2.2.0"
-maven-publish = "0.30.0"
-gradle-plugins = "1.0.10"
+maven-publish = "0.36.0"
+gradle-plugins = "1.0.11"
 
 [libraries]
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
