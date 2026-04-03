@@ -27,3 +27,9 @@ Pods are workspace containers that group inboxes, domains, and other resources t
 ```
 
 See [Scoped Access](scoped-access.md) for working with resources within a pod.
+
+## Next Steps
+
+- [Domains](domains.md) — register and manage custom domains
+- [Lists](lists.md) — manage mailing lists and subscribers
+- [Scoped Access](scoped-access.md) — work with resources within an inbox or pod

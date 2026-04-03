@@ -46,3 +46,9 @@ Block by subject or recipient:
 ```kotlin
 --8<-- "Lists.kt:list-types"
 ```
+
+## Next Steps
+
+- [Scoped Access](scoped-access.md) — work with resources within an inbox or pod
+- [Metrics & Organization](metrics.md) — view usage metrics and organization details
+- [Copy for Cursor / Claude](llm-cheatsheet.md) — LLM-friendly cheat sheet for AI assistants

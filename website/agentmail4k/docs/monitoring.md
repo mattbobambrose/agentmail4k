@@ -41,3 +41,9 @@ You can combine multiple conditions in a single filter:
 ```kotlin
 --8<-- "Monitoring.kt:poll-filter"
 ```
+
+## Next Steps
+
+- [Auto-Reply](auto-reply.md) — set up rule-based automatic replies
+- [Bulk Operations](bulk-operations.md) — send to multiple inboxes at once
+- [Webhooks](webhooks.md) — receive and verify webhook events

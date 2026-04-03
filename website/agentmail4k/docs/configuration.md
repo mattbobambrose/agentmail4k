@@ -42,3 +42,9 @@ Configure automatic retry behavior for failed requests:
 |-----------|---------|-------------|
 | `maxRetries` | 3 | Number of retry attempts |
 | `retryOnServerErrors` | true | Retry on 5xx server errors |
+
+## Next Steps
+
+- [Inboxes](inboxes.md) — create and manage inboxes
+- [Messages](messages.md) — send, reply, and forward messages
+- [Threads](threads.md) — list and manage conversation threads

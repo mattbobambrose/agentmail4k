@@ -47,3 +47,9 @@ Retrieve the DNS zone file for a domain:
 ```kotlin
 --8<-- "Domains.kt:delete-domain"
 ```
+
+## Next Steps
+
+- [Lists](lists.md) — manage mailing lists and subscribers
+- [Scoped Access](scoped-access.md) — work with resources within an inbox or pod
+- [Metrics & Organization](metrics.md) — view usage metrics and organization details

@@ -41,3 +41,9 @@ All list operations support pagination with `pageToken`:
 ```
 
 The same pagination pattern works for all list operations in the SDK (messages, threads, drafts, etc.).
+
+## Next Steps
+
+- [Messages](messages.md) — send, reply, and forward messages
+- [Threads](threads.md) — list and manage conversation threads
+- [Drafts](drafts.md) — create, update, and send drafts
