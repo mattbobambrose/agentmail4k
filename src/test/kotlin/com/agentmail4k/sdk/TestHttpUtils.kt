@@ -17,6 +17,12 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlin.time.Instant
 import kotlinx.serialization.json.Json
 import com.agentmail4k.sdk.model.Message
+import com.agentmail4k.sdk.model.Thread
+import com.agentmail4k.sdk.resource.InboxScope
+import com.agentmail4k.sdk.resource.MessageResource
+import com.agentmail4k.sdk.resource.ThreadResource
+import io.mockk.every
+import io.mockk.mockk
 
 internal val testInstant: Instant = Instant.parse("2026-01-01T00:00:00Z")
 
@@ -55,6 +61,44 @@ internal fun mockClient(
 }
 
 internal fun dummyClient(): HttpClient = mockClient { respondJson("{}") }
+
+internal fun testThread(
+  threadId: String = "thread_1",
+  inboxId: String = "inbox_1",
+  subject: String = "Test",
+) = Thread(
+  inboxId = inboxId,
+  threadId = threadId,
+  timestamp = testInstant,
+  subject = subject,
+  lastMessageId = "msg_1",
+  messageCount = 1,
+  size = 100,
+  updatedAt = testInstant,
+  createdAt = testInstant,
+)
+
+internal fun mockInboxClient(inboxId: String = "inbox_1"): Pair<AgentMailClient, MessageResource> {
+  val mockMessages = mockk<MessageResource>()
+  val mockScope = mockk<InboxScope> {
+    every { messages } returns mockMessages
+  }
+  val client = mockk<AgentMailClient>(relaxUnitFun = true) {
+    every { inboxes(inboxId) } returns mockScope
+  }
+  return client to mockMessages
+}
+
+internal fun mockThreadClient(inboxId: String = "inbox_1"): Pair<AgentMailClient, ThreadResource> {
+  val mockThreads = mockk<ThreadResource>()
+  val mockScope = mockk<InboxScope> {
+    every { threads } returns mockThreads
+  }
+  val client = mockk<AgentMailClient>(relaxUnitFun = true) {
+    every { inboxes(inboxId) } returns mockScope
+  }
+  return client to mockThreads
+}
 
 internal fun MockRequestHandleScope.respondJson(json: String): HttpResponseData =
   respond(

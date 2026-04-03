@@ -6,8 +6,6 @@ import com.agentmail4k.sdk.model.Message
 import com.agentmail4k.sdk.model.MessageList
 import com.agentmail4k.sdk.model.SendMessageResponse
 import com.agentmail4k.sdk.resource.InboxResource
-import com.agentmail4k.sdk.resource.InboxScope
-import com.agentmail4k.sdk.resource.MessageResource
 import com.agentmail4k.sdk.resource.PodResource
 import com.agentmail4k.sdk.resource.PodScope
 import com.agentmail4k.dsl.autoReply
@@ -23,17 +21,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlin.time.Duration.Companion.seconds
-
-private fun mockInboxClient(inboxId: String = "inbox_1"): Pair<AgentMailClient, MessageResource> {
-  val mockMessages = mockk<MessageResource>()
-  val mockScope = mockk<InboxScope> {
-    every { messages } returns mockMessages
-  }
-  val client = mockk<AgentMailClient>(relaxUnitFun = true) {
-    every { inboxes(inboxId) } returns mockScope
-  }
-  return client to mockMessages
-}
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MockKTest : StringSpec({
