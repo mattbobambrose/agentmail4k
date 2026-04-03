@@ -42,6 +42,8 @@ publish-local:
 	./gradlew publishToMavenLocal
 
 publish-maven-central:
+	ORG_GRADLE_PROJECT_signingInMemoryKey="$$(gpg --armor --export-secret-keys E4467B8F)" \
+	ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=$$(security find-generic-password -a "gpg-signing" -s "gradle-signing-password" -w) \
 	./gradlew publishAndReleaseToMavenCentral
 
 upgrade-wrapper:
