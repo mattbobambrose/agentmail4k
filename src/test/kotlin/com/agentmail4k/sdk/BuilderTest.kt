@@ -7,6 +7,7 @@ import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import com.agentmail4k.sdk.builder.CreateDomainBuilder
 import com.agentmail4k.sdk.builder.CreateListEntryBuilder
+import com.agentmail4k.sdk.builder.ListDraftsBuilder
 import com.agentmail4k.sdk.builder.CreateWebhookBuilder
 import com.agentmail4k.sdk.builder.DeleteThreadBuilder
 import com.agentmail4k.sdk.builder.ForwardMessageBuilder
@@ -359,5 +360,65 @@ class BuilderTest : StringSpec({
     request.labels shouldBe null
     request.addLabels shouldBe null
     request.removeLabels shouldBe null
+  }
+
+  "UpdateMessageBuilder with same label in addLabels and removeLabels passes both through" {
+    val builder = UpdateMessageBuilder().apply {
+      addLabels("read")
+      removeLabels("read")
+    }
+    val request = builder.build()
+    request.addLabels shouldBe listOf("read")
+    request.removeLabels shouldBe listOf("read")
+  }
+
+  "SendMessageBuilder should include cc and bcc when set" {
+    val builder = SendMessageBuilder().apply {
+      to = listOf("alice@example.com")
+      cc = listOf("bob@example.com")
+      bcc = listOf("carol@example.com")
+      subject = "Test"
+      html = "<p>Hello</p>"
+    }
+    val request = builder.build()
+    request.to shouldBe listOf("alice@example.com")
+    request.cc shouldBe listOf("bob@example.com")
+    request.bcc shouldBe listOf("carol@example.com")
+    request.html shouldBe "<p>Hello</p>"
+  }
+
+  "CreateListEntryBuilder should build with entry value" {
+    val builder = CreateListEntryBuilder().apply { entry = "block@spam.com" }
+    val request = builder.build()
+    request.entry shouldBe "block@spam.com"
+  }
+
+  "QueryMetricsBuilder should include start and end in query params" {
+    val builder = QueryMetricsBuilder().apply {
+      start = "2025-01-01"
+      end = "2025-12-31"
+    }
+    val params = builder.toQueryParams()
+    params["start"] shouldBe "2025-01-01"
+    params["end"] shouldBe "2025-12-31"
+  }
+
+  "ListDraftsBuilder should produce all query params correctly" {
+    val builder = ListDraftsBuilder().apply {
+      limit = 20
+      pageToken = "tok"
+      labels = listOf("draft")
+      before = "2026-01-01"
+      after = "2025-01-01"
+      ascending = true
+    }
+    builder.toQueryParams() shouldContainExactly mapOf(
+      "limit" to "20",
+      "page_token" to "tok",
+      "labels" to "draft",
+      "before" to "2026-01-01",
+      "after" to "2025-01-01",
+      "ascending" to "true",
+    )
   }
 })

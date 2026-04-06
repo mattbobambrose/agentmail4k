@@ -6,6 +6,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import kotlin.time.Instant
 import kotlinx.serialization.json.Json
 import com.agentmail4k.sdk.model.ApiKey
@@ -18,7 +19,11 @@ import com.agentmail4k.sdk.model.Inbox
 import com.agentmail4k.sdk.model.InboxList
 import com.agentmail4k.sdk.model.ListEntry
 import com.agentmail4k.sdk.model.Message
+import com.agentmail4k.sdk.model.MessageList
 import com.agentmail4k.sdk.model.Metric
+import com.agentmail4k.sdk.model.RawMessageResponse
+import com.agentmail4k.sdk.model.SendMessageResponse
+import com.agentmail4k.sdk.model.UpdateMessageResponse
 import com.agentmail4k.sdk.model.Pod
 import com.agentmail4k.sdk.model.Thread
 import com.agentmail4k.sdk.model.Webhook
@@ -419,5 +424,107 @@ class ModelTest : StringSpec({
     message.inReplyTo.shouldBeNull()
     message.references.shouldBeEmpty()
     message.headers shouldBe emptyMap()
+  }
+
+  "UpdateMessageResponse deserialization maps snake_case fields" {
+    val raw = """
+        {
+            "message_id": "msg-1",
+            "labels": ["read", "important"]
+        }
+        """.trimIndent()
+
+    val response = json.decodeFromString<UpdateMessageResponse>(raw)
+
+    response.messageId shouldBe "msg-1"
+    response.labels shouldContainExactly listOf("read", "important")
+  }
+
+  "Message round-trip serialization preserves all fields" {
+    val original = Message(
+      inboxId = "inbox-1",
+      threadId = "thread-1",
+      messageId = "msg-1",
+      labels = listOf("inbox", "unread"),
+      timestamp = Instant.parse("2024-01-01T00:00:00Z"),
+      from = "sender@example.com",
+      to = listOf("recipient@example.com"),
+      cc = listOf("cc@example.com"),
+      subject = "Hello",
+      text = "Hello world",
+      size = 2048,
+      updatedAt = Instant.parse("2024-01-01T00:00:00Z"),
+      createdAt = Instant.parse("2024-01-01T00:00:00Z"),
+    )
+
+    val encoded = json.encodeToString(original)
+    val decoded = json.decodeFromString<Message>(encoded)
+
+    decoded.inboxId shouldBe original.inboxId
+    decoded.threadId shouldBe original.threadId
+    decoded.messageId shouldBe original.messageId
+    decoded.labels shouldContainExactly original.labels
+    decoded.from shouldBe original.from
+    decoded.to shouldContainExactly original.to
+    decoded.cc shouldContainExactly original.cc
+    decoded.subject shouldBe original.subject
+    decoded.text shouldBe original.text
+    decoded.size shouldBe original.size
+  }
+
+  "SendMessageResponse deserialization maps snake_case fields" {
+    val raw = """
+        {
+            "message_id": "msg-1",
+            "thread_id": "thread-1"
+        }
+        """.trimIndent()
+
+    val response = json.decodeFromString<SendMessageResponse>(raw)
+
+    response.messageId shouldBe "msg-1"
+    response.threadId shouldBe "thread-1"
+  }
+
+  "RawMessageResponse deserialization parses raw field" {
+    val raw = """
+        {
+            "raw": "MIME-Version: 1.0\r\nFrom: a@b.com"
+        }
+        """.trimIndent()
+
+    val response = json.decodeFromString<RawMessageResponse>(raw)
+
+    response.raw shouldContain "MIME-Version"
+    response.raw shouldContain "From: a@b.com"
+  }
+
+  "MessageList deserialization with empty messages list" {
+    val raw = """
+        {
+            "count": 0,
+            "messages": []
+        }
+        """.trimIndent()
+
+    val messageList = json.decodeFromString<MessageList>(raw)
+
+    messageList.count shouldBe 0
+    messageList.messages.shouldBeEmpty()
+    messageList.limit.shouldBeNull()
+    messageList.nextPageToken.shouldBeNull()
+  }
+
+  "UpdateMessageResponse defaults to empty labels when field is absent" {
+    val raw = """
+        {
+            "message_id": "msg-1"
+        }
+        """.trimIndent()
+
+    val response = json.decodeFromString<UpdateMessageResponse>(raw)
+
+    response.messageId shouldBe "msg-1"
+    response.labels.shouldBeEmpty()
   }
 })
