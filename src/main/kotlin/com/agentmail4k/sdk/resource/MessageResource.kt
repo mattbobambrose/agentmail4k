@@ -18,6 +18,7 @@ import com.agentmail4k.sdk.model.AttachmentData
 import com.agentmail4k.sdk.model.Message
 import com.agentmail4k.sdk.model.MessageList
 import com.agentmail4k.sdk.model.RawMessageResponse
+import com.agentmail4k.sdk.model.UpdateMessageResponse
 import com.agentmail4k.sdk.model.SendMessageResponse
 
 /** Provides operations for managing email messages: list, get, update, send, reply, reply-all, forward, retrieve attachments, and get raw content. */
@@ -40,7 +41,7 @@ class MessageResource internal constructor(
   }
 
   /** Updates a message by ID. */
-  suspend fun update(messageId: String, block: UpdateMessageBuilder.() -> Unit): Message {
+  suspend fun update(messageId: String, block: UpdateMessageBuilder.() -> Unit): UpdateMessageResponse {
     require(messageId.isNotEmpty()) { "Message ID must not be empty." }
     val body = UpdateMessageBuilder().apply(block).build()
     return client.patch("$basePath/${messageId.encodeURLPathPart()}") {

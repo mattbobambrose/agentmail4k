@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.agentmail4k/agentmail4k)](https://central.sonatype.com/artifact/com.agentmail4k/agentmail4k)
-[![License: MIT](https://shields.io)](https://opensource.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 # agentmail4k
 

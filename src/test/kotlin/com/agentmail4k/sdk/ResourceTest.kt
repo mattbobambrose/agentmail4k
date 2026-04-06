@@ -537,15 +537,8 @@ class ResourceTest : StringSpec({
       respondJson(
         """
                 {
-                    "inbox_id": "inbox_1",
-                    "thread_id": "thread_1",
                     "message_id": "msg_1",
-                    "labels": ["read"],
-                    "timestamp": "2026-01-01T00:00:00Z",
-                    "from": "a@b.com",
-                    "size": 100,
-                    "updated_at": "2026-01-01T00:00:00Z",
-                    "created_at": "2026-01-01T00:00:00Z"
+                    "labels": ["read"]
                 }
             """
       )

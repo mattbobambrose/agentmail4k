@@ -23,6 +23,7 @@ import com.agentmail4k.sdk.model.PodList
 import com.agentmail4k.sdk.model.QueryMetricsResponse
 import com.agentmail4k.sdk.model.RawMessageResponse
 import com.agentmail4k.sdk.model.SendMessageResponse
+import com.agentmail4k.sdk.model.UpdateMessageResponse
 import com.agentmail4k.sdk.model.ThreadList
 import com.agentmail4k.sdk.model.Webhook
 import com.agentmail4k.sdk.model.WebhookList
@@ -146,7 +147,8 @@ class DslWrapperTest : StringSpec({
   "updateMessage uses message inboxId and messageId" {
     val msg = testMessage(messageId = "msg_1", inboxId = "inbox_1")
     val (client, scope) = mockInboxScopeClient("inbox_1")
-    coEvery { scope.messages.update(any(), any()) } returns msg
+    val updateResponse = UpdateMessageResponse(messageId = "msg_1", labels = listOf("read"))
+    coEvery { scope.messages.update(any(), any()) } returns updateResponse
 
     client.updateMessage(msg) { labels = listOf("read") }.messageId shouldBe "msg_1"
     coVerify { scope.messages.update("msg_1", any()) }

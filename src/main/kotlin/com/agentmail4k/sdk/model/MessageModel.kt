@@ -38,6 +38,13 @@ data class MessageList(
   val messages: List<Message>,
 )
 
+/** Response from updating a message, containing the message ID and updated labels. */
+@Serializable
+data class UpdateMessageResponse(
+  @SerialName("message_id") val messageId: String,
+  val labels: List<String> = emptyList(),
+)
+
 /** Response from sending a message, containing the message and thread IDs. */
 @Serializable
 data class SendMessageResponse(
