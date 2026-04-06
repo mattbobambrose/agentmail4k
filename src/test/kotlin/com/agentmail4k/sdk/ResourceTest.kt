@@ -758,4 +758,237 @@ class ResourceTest : StringSpec({
     val result = inboxScope.messages.list()
     result.count shouldBe 0
   }
+
+  // --- Additional resource operations ---
+
+  "MessageResource.get() sends GET to basePath/{id}" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_1/messages/msg_1"
+      respondJson(
+        """
+                {
+                    "inbox_id": "inbox_1",
+                    "thread_id": "thread_1",
+                    "message_id": "msg_1",
+                    "timestamp": "2026-01-01T00:00:00Z",
+                    "from": "a@b.com",
+                    "size": 100,
+                    "updated_at": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-01-01T00:00:00Z"
+                }
+            """
+      )
+    }
+    val resource = MessageResource(client, "${ApiPaths.INBOXES}/inbox_1/messages")
+    val result = resource.get("msg_1")
+    result.messageId shouldBe "msg_1"
+  }
+
+  "MessageResource.list() sends GET with query parameters" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/inboxes/inbox_1/messages"
+      request.url.parameters["limit"] shouldBe "5"
+      request.url.parameters["labels"] shouldBe "inbox,unread"
+      request.url.parameters["ascending"] shouldBe "true"
+      respondJson("""{"count": 0, "messages": []}""")
+    }
+    val resource = MessageResource(client, "${ApiPaths.INBOXES}/inbox_1/messages")
+    val result = resource.list {
+      limit = 5
+      labels = listOf("inbox", "unread")
+      ascending = true
+    }
+    result.count shouldBe 0
+  }
+
+  "ThreadResource.get() sends GET to basePath/{id}" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/threads/thread_1"
+      respondJson(
+        """
+                {
+                    "inbox_id": "inbox_1",
+                    "thread_id": "thread_1",
+                    "timestamp": "2026-01-01T00:00:00Z",
+                    "subject": "Test",
+                    "last_message_id": "msg_1",
+                    "message_count": 1,
+                    "size": 100,
+                    "updated_at": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-01-01T00:00:00Z"
+                }
+            """
+      )
+    }
+    val resource = ThreadResource(client, ApiPaths.THREADS)
+    val result = resource.get("thread_1")
+    result.threadId shouldBe "thread_1"
+    result.subject shouldBe "Test"
+  }
+
+  "DraftResource.list() sends GET with query parameters" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/drafts"
+      request.url.parameters["limit"] shouldBe "10"
+      respondJson("""{"count": 0, "drafts": []}""")
+    }
+    val resource = DraftResource(client, ApiPaths.DRAFTS)
+    val result = resource.list { limit = 10 }
+    result.count shouldBe 0
+  }
+
+  "DraftResource.get() sends GET to basePath/{id}" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/drafts/draft_1"
+      respondJson(
+        """
+                {
+                    "inbox_id": "inbox_1",
+                    "draft_id": "draft_1",
+                    "timestamp": "2026-01-01T00:00:00Z",
+                    "updated_at": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-01-01T00:00:00Z"
+                }
+            """
+      )
+    }
+    val resource = DraftResource(client, ApiPaths.DRAFTS)
+    val result = resource.get("draft_1")
+    result.draftId shouldBe "draft_1"
+  }
+
+  "DraftResource.create() sends POST with body" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Post
+      request.url.encodedPath shouldBe "/v0/drafts"
+      val body = request.body.toByteArray().decodeToString()
+      body shouldContain "\"to\""
+      body shouldContain "\"alice@example.com\""
+      respondJson(
+        """
+                {
+                    "inbox_id": "inbox_1",
+                    "draft_id": "draft_2",
+                    "timestamp": "2026-01-01T00:00:00Z",
+                    "updated_at": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-01-01T00:00:00Z"
+                }
+            """
+      )
+    }
+    val resource = DraftResource(client, ApiPaths.DRAFTS)
+    val result = resource.create { to = listOf("alice@example.com") }
+    result.draftId shouldBe "draft_2"
+  }
+
+  "DomainResource.list() sends GET with pagination" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/domains"
+      request.url.parameters["limit"] shouldBe "5"
+      respondJson("""{"count": 0, "domains": []}""")
+    }
+    val resource = DomainResource(client, ApiPaths.DOMAINS)
+    val result = resource.list { limit = 5 }
+    result.count shouldBe 0
+  }
+
+  "DomainResource.create() sends POST with name" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Post
+      request.url.encodedPath shouldBe "/v0/domains"
+      val body = request.body.toByteArray().decodeToString()
+      body shouldContain "\"name\""
+      body shouldContain "\"example.com\""
+      respondJson(
+        """
+                {
+                    "domain_id": "domain_1",
+                    "name": "example.com",
+                    "verified": false,
+                    "updated_at": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-01-01T00:00:00Z"
+                }
+            """
+      )
+    }
+    val resource = DomainResource(client, ApiPaths.DOMAINS)
+    val result = resource.create { name = "example.com" }
+    result.domainId shouldBe "domain_1"
+    result.name shouldBe "example.com"
+  }
+
+  "DomainResource.delete() sends DELETE to basePath/{id}" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Delete
+      request.url.encodedPath shouldBe "/v0/domains/domain_1"
+      respondJson("{}")
+    }
+    val resource = DomainResource(client, ApiPaths.DOMAINS)
+    resource.delete("domain_1")
+  }
+
+  "WebhookResource.list() sends GET to basePath" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/webhooks"
+      respondJson("""{"count": 0, "webhooks": []}""")
+    }
+    val resource = WebhookResource(client, ApiPaths.WEBHOOKS)
+    val result = resource.list()
+    result.count shouldBe 0
+  }
+
+  "WebhookResource.delete() sends DELETE to basePath/{id}" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Delete
+      request.url.encodedPath shouldBe "/v0/webhooks/wh_1"
+      respondJson("{}")
+    }
+    val resource = WebhookResource(client, ApiPaths.WEBHOOKS)
+    resource.delete("wh_1")
+  }
+
+  "PodResource.list() sends GET with query parameters" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/pods"
+      request.url.parameters["limit"] shouldBe "10"
+      respondJson("""{"count": 0, "pods": []}""")
+    }
+    val resource = PodResource(client, ApiPaths.PODS)
+    val result = resource.list { limit = 10 }
+    result.count shouldBe 0
+  }
+
+  "PodResource.delete() sends DELETE to basePath/{id}" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Delete
+      request.url.encodedPath shouldBe "/v0/pods/pod_1"
+      respondJson("{}")
+    }
+    val resource = PodResource(client, ApiPaths.PODS)
+    resource.delete("pod_1")
+  }
+
+  "MetricsResource.query() sends GET with builder params" {
+    val client = mockClient { request ->
+      request.method shouldBe HttpMethod.Get
+      request.url.encodedPath shouldBe "/v0/metrics"
+      request.url.parameters["event_types"] shouldBe "sent,received"
+      request.url.parameters["period"] shouldBe "day"
+      respondJson("""{"metrics": []}""")
+    }
+    val resource = MetricsResource(client, ApiPaths.METRICS)
+    val result = resource.query {
+      eventTypes = "sent,received"
+      period = com.agentmail4k.sdk.model.MetricsPeriod.DAY
+    }
+    result.metrics shouldBe emptyList()
+  }
 })

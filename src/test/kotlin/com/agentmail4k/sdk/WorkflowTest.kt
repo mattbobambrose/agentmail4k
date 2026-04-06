@@ -197,4 +197,41 @@ class WorkflowTest : StringSpec({
     handler.handle(validHeaders(rejectedSignature), rejectedBody)
     called shouldBe true
   }
+
+  "handle returns false when payload has no type field" {
+    val noTypeBody = """{"data":{}}"""
+    val noTypeToSign = "$svixId.$svixTimestamp.$noTypeBody"
+    val noTypeMac = Mac.getInstance("HmacSHA256").apply {
+      init(SecretKeySpec(secretBytes, "HmacSHA256"))
+    }
+    val noTypeSignature = "v1," + Base64.getEncoder().encodeToString(noTypeMac.doFinal(noTypeToSign.toByteArray()))
+
+    val handler = webhookHandler {
+      signingSecret = secret
+      onMessageReceived { }
+    }
+
+    val result = handler.handle(validHeaders(noTypeSignature), noTypeBody)
+    result shouldBe false
+  }
+
+  "handle returns true for unregistered event type without signing secret" {
+    val unknownBody = """{"type":"unknown.event","data":{}}"""
+    var called = false
+    val handler = webhookHandler {
+      onMessageReceived { called = true }
+    }
+
+    val result = handler.handle(emptyMap(), unknownBody)
+    result shouldBe true
+    called shouldBe false
+  }
+
+  "handle returns false when body is empty JSON object" {
+    val emptyBody = """{}"""
+    val handler = webhookHandler { }
+
+    val result = handler.handle(emptyMap(), emptyBody)
+    result shouldBe false
+  }
 })
