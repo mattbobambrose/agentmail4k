@@ -40,7 +40,7 @@ suspend fun quickStart() {
         subject = "Hello from AgentMail!"
         text = "This is a test message sent with agentmail4k."
     }
-    println("Sent message: ${response.messageId}")
+    println("Sent message: ${response!!.messageId}")
 
     client.close()
 }

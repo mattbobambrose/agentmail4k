@@ -56,6 +56,8 @@ private fun mockInboxScopeClient(inboxId: String): Pair<AgentMailClient, InboxSc
   }
   val client = mockk<AgentMailClient>(relaxUnitFun = true) {
     every { inboxes(inboxId) } returns mockScope
+    every { perSenderRateLimiter } returns null
+    every { perRecipientRateLimiter } returns null
   }
   return client to mockScope
 }
@@ -122,7 +124,7 @@ class DslWrapperTest : StringSpec({
     val (client, scope) = mockInboxScopeClient("inbox_1")
     coEvery { scope.messages.reply(any(), any()) } returns SendMessageResponse("msg_reply", "thread_1")
 
-    client.replyToMessage(msg) { text = "Got it" }.messageId shouldBe "msg_reply"
+    client.replyToMessage(msg) { text = "Got it" }!!.messageId shouldBe "msg_reply"
     coVerify { scope.messages.reply("msg_1", any()) }
   }
 
@@ -131,7 +133,7 @@ class DslWrapperTest : StringSpec({
     val (client, scope) = mockInboxScopeClient("inbox_1")
     coEvery { scope.messages.replyAll(any(), any()) } returns SendMessageResponse("msg_ra", "thread_1")
 
-    client.replyAllToMessage(msg) { text = "Noted" }.messageId shouldBe "msg_ra"
+    client.replyAllToMessage(msg) { text = "Noted" }!!.messageId shouldBe "msg_ra"
     coVerify { scope.messages.replyAll("msg_1", any()) }
   }
 
@@ -140,7 +142,7 @@ class DslWrapperTest : StringSpec({
     val (client, scope) = mockInboxScopeClient("inbox_1")
     coEvery { scope.messages.forward(any(), any()) } returns SendMessageResponse("msg_fwd", "thread_2")
 
-    client.forwardMessage(msg) { to = listOf("other@example.com") }.messageId shouldBe "msg_fwd"
+    client.forwardMessage(msg) { to = listOf("other@example.com") }!!.messageId shouldBe "msg_fwd"
     coVerify { scope.messages.forward("msg_1", any()) }
   }
 

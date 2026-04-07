@@ -64,7 +64,7 @@ class DslTest : StringSpec() {
         text = "Hi there"
       }
 
-      result.messageId shouldBe "msg_dsl34"
+      result!!.messageId shouldBe "msg_dsl34"
       result.threadId shouldBe "thread_dsl"
     }
 

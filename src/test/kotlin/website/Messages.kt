@@ -23,7 +23,7 @@ suspend fun sendMessageExample() {
         text = "Plain text body"
         html = "<h1>Hello!</h1><p>HTML body</p>"
     }
-    println("Message ID: ${response.messageId}")
+    println("Message ID: ${response!!.messageId}")
     println("Thread ID: ${response.threadId}")
     client.close()
 }
