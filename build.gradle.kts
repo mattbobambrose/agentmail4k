@@ -1,3 +1,6 @@
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.SourcesJar
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
@@ -13,12 +16,11 @@ application {
 }
 
 group = "com.agentmail4k"
-version = findProperty("overrideVersion") as String? ?: "0.1.2"
+version = findProperty("overrideVersion") as String? ?: "0.1.3"
 
 repositories {
     google()
     mavenCentral()
-    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -53,6 +55,12 @@ dokka {
 }
 
 mavenPublishing {
+    configure(
+        com.vanniktech.maven.publish.KotlinJvm(
+            javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
+            sourcesJar = SourcesJar.Sources(),
+        ),
+    )
     coordinates("com.agentmail4k", "agentmail4k", version.toString())
 
     pom {
@@ -79,8 +87,11 @@ mavenPublishing {
         }
     }
 
-    publishToMavenCentral()
-    if (!version.toString().endsWith("-SNAPSHOT")) {
-        signAllPublications()
-    }
+    publishToMavenCentral(automaticRelease = true)
+    signAllPublications()
+}
+
+// Skip signing when no GPG key is provided (e.g., local publishing)
+tasks.withType<Sign>().configureEach {
+    isEnabled = project.findProperty("signingInMemoryKey") != null
 }
