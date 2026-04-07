@@ -16,7 +16,7 @@ An idiomatic Kotlin DSL for the [AgentMail](https://agentmail.to) API, built on 
 
 ```kotlin
 dependencies {
-    implementation("com.agentmail4k:agentmail4k:0.1.2")
+    implementation("com.agentmail4k:agentmail4k:0.1.3")
 }
 ```
 
@@ -24,7 +24,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'com.agentmail4k:agentmail4k:0.1.2'
+    implementation 'com.agentmail4k:agentmail4k:0.1.3'
 }
 ```
 

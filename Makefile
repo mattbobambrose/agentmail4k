@@ -1,3 +1,5 @@
+VERSION=$(shell grep '^version =' build.gradle.kts | head -1 | sed 's/.*"\(.*\)"/\1/' | sed 's/-SNAPSHOT//')
+
 default: versioncheck
 
 clean:
@@ -42,19 +44,17 @@ publish-local:
 	./gradlew publishToMavenLocal
 
 publish-local-snapshot:
-	$(eval BASE_VERSION := $(shell grep '^version =' build.gradle.kts | sed 's/.*"\(.*\)"/\1/' | sed 's/-SNAPSHOT//'))
-	./gradlew -PoverrideVersion=$(BASE_VERSION)-SNAPSHOT publishToMavenLocal
+	./gradlew -PoverrideVersion=$(VERSION)-SNAPSHOT publishToMavenLocal
+
+GPG_ENV = \
+	ORG_GRADLE_PROJECT_signingInMemoryKey="$$(gpg --armor --export-secret-keys $$GPG_SIGNING_KEY_ID)" \
+	ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=$$(security find-generic-password -a "gpg-signing" -s "gradle-signing-password" -w)
 
 publish-snapshot:
-	$(eval BASE_VERSION := $(shell grep '^version =' build.gradle.kts | sed 's/.*"\(.*\)"/\1/' | sed 's/-SNAPSHOT//'))
-	ORG_GRADLE_PROJECT_signingInMemoryKey="$$(gpg --armor --export-secret-keys E4467B8F)" \
-	ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=$$(security find-generic-password -a "gpg-signing" -s "gradle-signing-password" -w) \
-	./gradlew -PoverrideVersion=$(BASE_VERSION)-SNAPSHOT publishToMavenCentral
+	$(GPG_ENV) ./gradlew -PoverrideVersion=$(VERSION)-SNAPSHOT publishToMavenCentral
 
 publish-maven-central:
-	ORG_GRADLE_PROJECT_signingInMemoryKey="$$(gpg --armor --export-secret-keys E4467B8F)" \
-	ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=$$(security find-generic-password -a "gpg-signing" -s "gradle-signing-password" -w) \
-	./gradlew publishAndReleaseToMavenCentral
+	$(GPG_ENV) ./gradlew publishAndReleaseToMavenCentral
 
 upgrade-wrapper:
 	./gradlew wrapper --gradle-version=9.4.1 --distribution-type=bin
