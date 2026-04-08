@@ -43,6 +43,38 @@ Configure automatic retry behavior for failed requests:
 | `maxRetries` | 3 | Number of retry attempts |
 | `retryOnServerErrors` | true | Retry on 5xx server errors |
 
+## Rate Limiting
+
+Configure client-side rate limiting for outgoing messages. Limits are enforced per sender or per recipient using a sliding time window.
+
+```kotlin
+--8<-- "Configuration.kt:rate-limit-config"
+```
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `maxMessages` | 1 | Max messages allowed within the window |
+| `window` | 5 seconds | Sliding time window duration |
+| `onLimitExceeded` | `STOP` | Action when limit is exceeded |
+
+### Actions
+
+| Action | Behavior |
+|--------|----------|
+| `STOP` | Throws `RateLimitExceededException` |
+| `SKIP` | Logs a warning and returns `null` without sending |
+| `DELAY` | Suspends until the window clears, then sends |
+
+When using `SKIP`, send functions return `SendMessageResponse?` — check for `null` to detect skipped messages.
+
+### Delay Example
+
+Use `DELAY` to automatically throttle without dropping or failing:
+
+```kotlin
+--8<-- "Configuration.kt:rate-limit-delay"
+```
+
 ## Next Steps
 
 - [Inboxes](inboxes.md) — create and manage inboxes

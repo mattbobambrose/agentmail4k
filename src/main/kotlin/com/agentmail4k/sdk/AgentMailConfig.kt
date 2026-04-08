@@ -10,6 +10,8 @@ class AgentMailConfigBuilder {
   var baseUrl: String = "https://api.agentmail.to"
   private var timeoutBuilder = TimeoutBuilder()
   private var retryBuilder = RetryBuilder()
+  private var perSenderRateLimiterBuilder: RateLimiterBuilder? = null
+  private var perRecipientRateLimiterBuilder: RateLimiterBuilder? = null
 
   /** Configures HTTP timeout settings. */
   fun timeout(block: TimeoutBuilder.() -> Unit) {
@@ -21,12 +23,24 @@ class AgentMailConfigBuilder {
     retryBuilder.apply(block)
   }
 
+  /** Configures per-sender rate limiting for outgoing messages. */
+  fun perSenderRateLimiter(block: RateLimiterBuilder.() -> Unit) {
+    perSenderRateLimiterBuilder = RateLimiterBuilder().apply(block)
+  }
+
+  /** Configures per-recipient rate limiting for outgoing messages. */
+  fun perRecipientRateLimiter(block: RateLimiterBuilder.() -> Unit) {
+    perRecipientRateLimiterBuilder = RateLimiterBuilder().apply(block)
+  }
+
   internal fun build(): AgentMailConfig = AgentMailConfig(
     apiKey = apiKey ?: System.getenv("AGENTMAIL_API_KEY")
     ?: error("API key must be provided via constructor or AGENTMAIL_API_KEY environment variable"),
     baseUrl = baseUrl.trimEnd('/'),
     timeout = timeoutBuilder.build(),
     retry = retryBuilder.build(),
+    perSenderRateLimiter = perSenderRateLimiterBuilder?.build(),
+    perRecipientRateLimiter = perRecipientRateLimiterBuilder?.build(),
   )
 }
 
@@ -36,6 +50,8 @@ data class AgentMailConfig(
   val baseUrl: String,
   val timeout: TimeoutConfig,
   val retry: RetryConfig,
+  val perSenderRateLimiter: RateLimiterConfig? = null,
+  val perRecipientRateLimiter: RateLimiterConfig? = null,
 )
 
 /** DSL builder for configuring HTTP timeout durations. */

@@ -20,9 +20,11 @@ suspend fun AgentMailClient.listMessages(
 suspend fun AgentMailClient.toFullMessage(message: Message) =
   inboxes(message.inboxId).messages.get(message.messageId)
 
-/** Sends an email message from an inbox to recipients. */
-suspend fun AgentMailClient.sendMessage(block: SendMessage.() -> Unit): SendMessageResponse {
+/** Sends an email message from an inbox to recipients. Returns `null` if rate-limited with [SKIP][com.agentmail4k.sdk.RateLimitAction.SKIP]. */
+suspend fun AgentMailClient.sendMessage(block: SendMessage.() -> Unit): SendMessageResponse? {
   val sendMessage = SendMessage().apply(block)
+  if (!checkSenderLimit(sendMessage.from)) return null
+  if (!checkRecipientLimits(sendMessage.to, sendMessage.cc, sendMessage.bcc)) return null
   return inboxes(sendMessage.from).messages.send {
     to = sendMessage.to
     cc = sendMessage.cc
@@ -33,23 +35,51 @@ suspend fun AgentMailClient.sendMessage(block: SendMessage.() -> Unit): SendMess
   }
 }
 
-/** Sends a reply to a specific message. */
+/** Sends a reply to a specific message. Returns `null` if rate-limited with [SKIP][com.agentmail4k.sdk.RateLimitAction.SKIP]. */
 suspend fun AgentMailClient.replyToMessage(
   message: Message,
   block: ReplyBuilder.() -> Unit,
-) = inboxes(message.inboxId).messages.reply(message.messageId, block)
+): SendMessageResponse? {
+  if (!checkSenderLimit(message.inboxId)) return null
+  if (!checkRecipientLimits(listOf(message.from))) return null
+  return inboxes(message.inboxId).messages.reply(message.messageId, block)
+}
 
-/** Sends a reply-all to a specific message. */
+/** Sends a reply-all to a specific message. Returns `null` if rate-limited with [SKIP][com.agentmail4k.sdk.RateLimitAction.SKIP]. */
 suspend fun AgentMailClient.replyAllToMessage(
   message: Message,
   block: ReplyAllBuilder.() -> Unit,
-) = inboxes(message.inboxId).messages.replyAll(message.messageId, block)
+): SendMessageResponse? {
+  if (!checkSenderLimit(message.inboxId)) return null
+  if (!checkRecipientLimits(listOf(message.from) + message.to + message.cc)) return null
+  return inboxes(message.inboxId).messages.replyAll(message.messageId, block)
+}
 
-/** Forwards a message to new recipients. */
+/** Forwards a message to new recipients. Returns `null` if rate-limited with [SKIP][com.agentmail4k.sdk.RateLimitAction.SKIP]. */
 suspend fun AgentMailClient.forwardMessage(
   message: Message,
   block: ForwardMessageBuilder.() -> Unit,
-) = inboxes(message.inboxId).messages.forward(message.messageId, block)
+): SendMessageResponse? {
+  val builder = ForwardMessageBuilder().apply(block)
+  if (!checkSenderLimit(message.inboxId)) return null
+  if (!checkRecipientLimits(builder.to, builder.cc, builder.bcc)) return null
+  return inboxes(message.inboxId).messages.forward(message.messageId, builder)
+}
+
+private suspend fun AgentMailClient.checkSenderLimit(senderId: String): Boolean =
+  perSenderRateLimiter?.acquire(senderId) != false
+
+private suspend fun AgentMailClient.checkRecipientLimits(
+  to: List<String>,
+  cc: List<String>? = null,
+  bcc: List<String>? = null,
+): Boolean {
+  val limiter = perRecipientRateLimiter ?: return true
+  for (recipient in to + (cc ?: emptyList()) + (bcc ?: emptyList())) {
+    if (!limiter.acquire(recipient)) return false
+  }
+  return true
+}
 
 /** Updates a message's labels. */
 suspend fun AgentMailClient.updateMessage(

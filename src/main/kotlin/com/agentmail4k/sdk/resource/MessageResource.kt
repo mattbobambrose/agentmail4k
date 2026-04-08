@@ -76,9 +76,13 @@ class MessageResource internal constructor(
   }
 
   /** Forwards a message to new recipients. */
-  suspend fun forward(messageId: String, block: ForwardMessageBuilder.() -> Unit): SendMessageResponse {
+  suspend fun forward(messageId: String, block: ForwardMessageBuilder.() -> Unit): SendMessageResponse =
+    forward(messageId, ForwardMessageBuilder().apply(block))
+
+  /** Forwards a message using a pre-built builder. */
+  internal suspend fun forward(messageId: String, builder: ForwardMessageBuilder): SendMessageResponse {
     require(messageId.isNotEmpty()) { "Message ID must not be empty." }
-    val body = ForwardMessageBuilder().apply(block).build()
+    val body = builder.build()
     return client.post("$basePath/${messageId.encodeURLPathPart()}/forward") {
       setBody(body)
     }.body()

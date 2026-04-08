@@ -3,6 +3,7 @@ package com.agentmail4k.sdk
 import io.ktor.client.HttpClient
 import com.agentmail4k.sdk.internal.ApiPaths
 import com.agentmail4k.sdk.internal.HttpClientFactory
+import com.agentmail4k.sdk.internal.SlidingWindowRateLimiter
 import com.agentmail4k.sdk.resource.ApiKeyResource
 import com.agentmail4k.sdk.resource.DomainResource
 import com.agentmail4k.sdk.resource.DraftResource
@@ -25,6 +26,8 @@ import java.io.Closeable
  */
 class AgentMailClient internal constructor(
   private val httpClient: HttpClient,
+  internal val perSenderRateLimiter: SlidingWindowRateLimiter? = null,
+  internal val perRecipientRateLimiter: SlidingWindowRateLimiter? = null,
 ) : Closeable {
 
   val inboxes: InboxResource = InboxResource(httpClient, ApiPaths.INBOXES)
@@ -53,7 +56,11 @@ class AgentMailClient internal constructor(
     operator fun invoke(block: AgentMailConfigBuilder.() -> Unit = {}): AgentMailClient {
       val config = AgentMailConfigBuilder().apply(block).build()
       val httpClient = HttpClientFactory.create(config)
-      return AgentMailClient(httpClient)
+      return AgentMailClient(
+        httpClient = httpClient,
+        perSenderRateLimiter = config.perSenderRateLimiter?.let { SlidingWindowRateLimiter(it) },
+        perRecipientRateLimiter = config.perRecipientRateLimiter?.let { SlidingWindowRateLimiter(it) },
+      )
     }
   }
 }

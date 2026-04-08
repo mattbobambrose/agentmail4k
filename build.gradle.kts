@@ -8,11 +8,6 @@ plugins {
     alias(libs.plugins.pambrose.testing)
     alias(libs.plugins.dokka)
     alias(libs.plugins.maven.publish)
-    application
-}
-
-application {
-    mainClass.set("MainKt")
 }
 
 group = "com.agentmail4k"
