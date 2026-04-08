@@ -1,6 +1,7 @@
 package com.agentmail4k.dsl
 
 import com.agentmail4k.sdk.AgentMailClient
+import com.agentmail4k.sdk.builder.ForwardMessageBuilder
 import com.agentmail4k.sdk.testInstant
 import com.agentmail4k.sdk.testMessage
 import com.agentmail4k.sdk.model.ApiKeyList
@@ -140,10 +141,10 @@ class DslWrapperTest : StringSpec({
   "forwardMessage uses message inboxId and messageId" {
     val msg = testMessage(messageId = "msg_1", inboxId = "inbox_1")
     val (client, scope) = mockInboxScopeClient("inbox_1")
-    coEvery { scope.messages.forward(any(), any()) } returns SendMessageResponse("msg_fwd", "thread_2")
+    coEvery { scope.messages.forward(any(), any<ForwardMessageBuilder>()) } returns SendMessageResponse("msg_fwd", "thread_2")
 
     client.forwardMessage(msg) { to = listOf("other@example.com") }!!.messageId shouldBe "msg_fwd"
-    coVerify { scope.messages.forward("msg_1", any()) }
+    coVerify { scope.messages.forward("msg_1", any<ForwardMessageBuilder>()) }
   }
 
   "updateMessage uses message inboxId and messageId" {

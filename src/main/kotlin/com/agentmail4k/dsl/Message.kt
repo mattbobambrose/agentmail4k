@@ -23,12 +23,8 @@ suspend fun AgentMailClient.toFullMessage(message: Message) =
 /** Sends an email message from an inbox to recipients. Returns `null` if rate-limited with [SKIP][com.agentmail4k.sdk.RateLimitAction.SKIP]. */
 suspend fun AgentMailClient.sendMessage(block: SendMessage.() -> Unit): SendMessageResponse? {
   val sendMessage = SendMessage().apply(block)
-  if (perSenderRateLimiter?.acquire(sendMessage.from) == false) return null
-  perRecipientRateLimiter?.let { limiter ->
-    for (recipient in sendMessage.to + (sendMessage.cc ?: emptyList()) + (sendMessage.bcc ?: emptyList())) {
-      if (!limiter.acquire(recipient)) return null
-    }
-  }
+  if (!checkSenderLimit(sendMessage.from)) return null
+  if (!checkRecipientLimits(sendMessage.to, sendMessage.cc, sendMessage.bcc)) return null
   return inboxes(sendMessage.from).messages.send {
     to = sendMessage.to
     cc = sendMessage.cc
@@ -44,8 +40,8 @@ suspend fun AgentMailClient.replyToMessage(
   message: Message,
   block: ReplyBuilder.() -> Unit,
 ): SendMessageResponse? {
-  if (perSenderRateLimiter?.acquire(message.inboxId) == false) return null
-  if (perRecipientRateLimiter?.acquire(message.from) == false) return null
+  if (!checkSenderLimit(message.inboxId)) return null
+  if (!checkRecipientLimits(listOf(message.from))) return null
   return inboxes(message.inboxId).messages.reply(message.messageId, block)
 }
 
@@ -54,12 +50,8 @@ suspend fun AgentMailClient.replyAllToMessage(
   message: Message,
   block: ReplyAllBuilder.() -> Unit,
 ): SendMessageResponse? {
-  if (perSenderRateLimiter?.acquire(message.inboxId) == false) return null
-  perRecipientRateLimiter?.let { limiter ->
-    for (recipient in listOf(message.from) + message.to + message.cc) {
-      if (!limiter.acquire(recipient)) return null
-    }
-  }
+  if (!checkSenderLimit(message.inboxId)) return null
+  if (!checkRecipientLimits(listOf(message.from) + message.to + message.cc)) return null
   return inboxes(message.inboxId).messages.replyAll(message.messageId, block)
 }
 
@@ -68,14 +60,25 @@ suspend fun AgentMailClient.forwardMessage(
   message: Message,
   block: ForwardMessageBuilder.() -> Unit,
 ): SendMessageResponse? {
-  if (perSenderRateLimiter?.acquire(message.inboxId) == false) return null
-  perRecipientRateLimiter?.let { limiter ->
-    val builder = ForwardMessageBuilder().apply(block)
-    for (recipient in builder.to + (builder.cc ?: emptyList()) + (builder.bcc ?: emptyList())) {
-      if (!limiter.acquire(recipient)) return null
-    }
+  val builder = ForwardMessageBuilder().apply(block)
+  if (!checkSenderLimit(message.inboxId)) return null
+  if (!checkRecipientLimits(builder.to, builder.cc, builder.bcc)) return null
+  return inboxes(message.inboxId).messages.forward(message.messageId, builder)
+}
+
+private suspend fun AgentMailClient.checkSenderLimit(senderId: String): Boolean =
+  perSenderRateLimiter?.acquire(senderId) != false
+
+private suspend fun AgentMailClient.checkRecipientLimits(
+  to: List<String>,
+  cc: List<String>? = null,
+  bcc: List<String>? = null,
+): Boolean {
+  val limiter = perRecipientRateLimiter ?: return true
+  for (recipient in to + (cc ?: emptyList()) + (bcc ?: emptyList())) {
+    if (!limiter.acquire(recipient)) return false
   }
-  return inboxes(message.inboxId).messages.forward(message.messageId, block)
+  return true
 }
 
 /** Updates a message's labels. */

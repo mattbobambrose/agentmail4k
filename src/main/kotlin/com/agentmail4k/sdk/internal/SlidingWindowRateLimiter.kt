@@ -43,16 +43,24 @@ internal class SlidingWindowRateLimiter(private val config: RateLimiterConfig) {
           }
           RateLimitAction.SKIP -> {
             logger.warn("Rate limit exceeded for '{}' ({} per {}), skipping message", key, config.maxMessages, config.window)
+            evictKeyIfEmpty(key, state)
             return false
           }
           RateLimitAction.STOP -> {
             logger.error("Rate limit exceeded for '{}' ({} per {}), stopping", key, config.maxMessages, config.window)
+            evictKeyIfEmpty(key, state)
             throw RateLimitExceededException(key, config.maxMessages, config.window)
           }
         }
       }
       state.timestamps.addLast(TimeSource.Monotonic.markNow())
       return true
+    }
+  }
+
+  private fun evictKeyIfEmpty(key: String, state: KeyState) {
+    if (state.timestamps.isEmpty()) {
+      keys.remove(key, state)
     }
   }
 
