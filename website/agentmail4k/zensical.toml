@@ -65,6 +65,7 @@ nav = [
     { "Monitoring" = "monitoring.md" },
     { "Auto-Reply" = "auto-reply.md" },
     { "Bulk Operations" = "bulk-operations.md" },
+    { "Rate Limiting" = "rate-limiting.md" },
     { "Webhooks" = "webhooks.md" },
   ]},
   { "Organization" = [
