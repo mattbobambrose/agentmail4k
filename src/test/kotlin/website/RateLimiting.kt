@@ -2,12 +2,12 @@
 
 package website
 
+import com.agentmail4k.dsl.listMessages
 import com.agentmail4k.dsl.replyToMessage
 import com.agentmail4k.dsl.sendMessage
 import com.agentmail4k.sdk.AgentMailClient
 import com.agentmail4k.sdk.RateLimitAction
 import com.agentmail4k.sdk.RateLimitExceededException
-import com.agentmail4k.dsl.listMessages
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
