@@ -116,6 +116,36 @@ Output is written to `build/dokka/html/`.
 
 Full documentation is available at [mattbobambrose.github.io/agentmail4k](https://mattbobambrose.github.io/agentmail4k/).
 
+## Publishing
+
+Publishing is driven by the `Makefile`:
+
+| Target                        | Publishes                                                     |
+|-------------------------------|---------------------------------------------------------------|
+| `make publish-local`          | The current version to `~/.m2` (unsigned)                     |
+| `make publish-local-snapshot` | `<version>-SNAPSHOT` to `~/.m2` (unsigned)                    |
+| `make publish-snapshot`       | `<version>-SNAPSHOT` to the Maven Central snapshot repository |
+| `make publish-maven-central`  | The current version to Maven Central, released automatically  |
+
+The two Maven Central targets are macOS-only. They read the signing key and Maven Central credentials at run time and
+pass them to that one Gradle command as `ORG_GRADLE_PROJECT_*` environment variables, so nothing is stored in
+`~/.gradle/gradle.properties`. They need:
+
+- `GPG_SIGNING_KEY_ID` — environment variable naming the GPG key used to sign the artifacts
+- Keychain entry `gradle-signing-password` (account `gpg-signing`) — the signing key's passphrase
+- Keychain entries `maven-central-username` and `maven-central-password` (account `maven-central`) — a user token's
+  name and password, generated at [central.sonatype.com](https://central.sonatype.com/account)
+
+Add the keychain entries once. Each command prompts for the value, keeping it out of shell history:
+
+```bash
+security add-generic-password -a gpg-signing -s gradle-signing-password -U -w
+security add-generic-password -a maven-central -s maven-central-username -U -w
+security add-generic-password -a maven-central -s maven-central-password -U -w
+```
+
+Both targets fail fast, naming whatever is missing, before running Gradle.
+
 ## License
 
 [MIT](LICENSE.md)
