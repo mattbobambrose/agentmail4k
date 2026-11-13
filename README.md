@@ -144,7 +144,8 @@ security add-generic-password -a maven-central -s maven-central-username -U -w
 security add-generic-password -a maven-central -s maven-central-password -U -w
 ```
 
-Both targets fail fast, naming whatever is missing, before running Gradle.
+Both targets fail fast, naming whatever is missing, before running Gradle. Gradle itself also requires signing
+whenever a build publishes to Maven Central, however it is started, so unsigned artifacts are never uploaded.
 
 ## License
 
