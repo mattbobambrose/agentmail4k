@@ -46,15 +46,37 @@ publish-local:
 publish-local-snapshot:
 	./gradlew -PoverrideVersion=$(VERSION)-SNAPSHOT publishToMavenLocal
 
+# Publishing credentials come from the macOS keychain and reach only the publishing commands, as ORG_GRADLE_PROJECT_*
+# variables, never ~/.gradle/gradle.properties, which every Gradle build on the machine is given. Setup: README.md,
+# "Publishing".
+
+# Shell command printing a keychain entry's value: $(call keychain,<account>,<service>)
+keychain = security find-generic-password -a "$(1)" -s "$(2)" -w
+
+# Shell test failing, naming the entry and never its value, when a keychain entry is missing or empty
+check_keychain = [ -n "$$($(call keychain,$(1),$(2)) 2>/dev/null)" ] || { \
+	echo "ERROR: keychain entry '$(2)' (account '$(1)') is missing or empty; add it with: security add-generic-password -a $(1) -s $(2) -U -w" >&2; \
+	exit 1; }
+
 GPG_ENV = \
 	ORG_GRADLE_PROJECT_signingInMemoryKey="$$(gpg --armor --export-secret-keys $$GPG_SIGNING_KEY_ID)" \
-	ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=$$(security find-generic-password -a "gpg-signing" -s "gradle-signing-password" -w)
+	ORG_GRADLE_PROJECT_signingInMemoryKeyPassword="$$($(call keychain,gpg-signing,gradle-signing-password))"
 
-publish-snapshot:
-	$(GPG_ENV) ./gradlew -PoverrideVersion=$(VERSION)-SNAPSHOT publishToMavenCentral
+MAVEN_CENTRAL_ENV = \
+	ORG_GRADLE_PROJECT_mavenCentralUsername="$$($(call keychain,maven-central,maven-central-username))" \
+	ORG_GRADLE_PROJECT_mavenCentralPassword="$$($(call keychain,maven-central,maven-central-password))"
 
-publish-maven-central:
-	$(GPG_ENV) ./gradlew publishAndReleaseToMavenCentral
+publish-snapshot: _check-publish-env
+	$(GPG_ENV) $(MAVEN_CENTRAL_ENV) ./gradlew -PoverrideVersion=$(VERSION)-SNAPSHOT publishToMavenCentral
+
+publish-maven-central: _check-publish-env
+	$(GPG_ENV) $(MAVEN_CENTRAL_ENV) ./gradlew publishAndReleaseToMavenCentral
 
 upgrade-wrapper:
 	./gradlew wrapper --gradle-version=9.4.1 --distribution-type=bin
+
+_check-publish-env:
+	@[ -n "$$GPG_SIGNING_KEY_ID" ] || { echo "ERROR: GPG_SIGNING_KEY_ID is not set" >&2; exit 1; }
+	@$(call check_keychain,gpg-signing,gradle-signing-password)
+	@$(call check_keychain,maven-central,maven-central-username)
+	@$(call check_keychain,maven-central,maven-central-password)

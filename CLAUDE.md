@@ -17,6 +17,12 @@ Base package: `com.agentmail4k`
 ./gradlew dokkaGenerate     # Generate KDoc API reference (output: build/dokka/html/)
 ```
 
+## Publishing
+
+- `make publish-local[-snapshot]` publishes to `~/.m2` (unsigned); `make publish-snapshot` / `make publish-maven-central`
+  publish to Maven Central with credentials from the macOS keychain (setup: README "Publishing")
+- Never put signing or Maven Central credentials in `~/.gradle/gradle.properties`
+
 ## Testing
 
 - Use **Kotest** with **StringSpec** style and `init {}` block
