@@ -86,7 +86,10 @@ mavenPublishing {
     signAllPublications()
 }
 
-// Skip signing when no GPG key is provided (e.g., local publishing)
-tasks.withType<Sign>().configureEach {
-    isEnabled = project.findProperty("signingInMemoryKey") != null
+// Require signing whenever the build publishes to Maven Central (snapshots included), so a missing key fails the
+// build instead of uploading unsigned artifacts. Otherwise, e.g., publishing to ~/.m2, signing is skipped without a key
+configure<SigningExtension> {
+    setRequired {
+        gradle.taskGraph.allTasks.any { it is PublishToMavenRepository && it.repository.name == "mavenCentral" }
+    }
 }
